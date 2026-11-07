@@ -2,7 +2,7 @@
 
 slug: `team-lead`
 
-Mutable duties for this Role. Cross-Role routing is defined only in [`../../workflow.md`](../../workflow.md).
+Mutable duties for this Role. Cross-Role routing is defined only in [`../../workflows/`](../../workflows/).
 
 ## Responsibilities
 
@@ -47,7 +47,7 @@ Mutable duties for this Role. Cross-Role routing is defined only in [`../../work
 
 ## Handoffs
 
-When *this* Role should hand work off on a normal completion path. Who receives it and what happens next: [`../../workflow.md`](../../workflow.md).
+When *this* Role should hand work off on a normal completion path. Who receives it and what happens next: [`../../workflows/`](../../workflows/).
 
 - When the ask is clear enough to assign implementation or research
 - When a Role finishes a slice and the next Role (or the human) needs the result
@@ -55,7 +55,7 @@ When *this* Role should hand work off on a normal completion path. Who receives 
 
 ## When stuck
 
-When to stop and raise a problem outside this Role (blocked, needs a decision, out of authority)—not a normal handoff. Who handles it next: [`../../workflow.md`](../../workflow.md).
+When to stop and raise a problem outside this Role (blocked, needs a decision, out of authority)—not a normal handoff. Who handles it next: [`../../workflows/`](../../workflows/).
 
 - The human's goals conflict or done-when cannot be agreed after a clear discussion
 - The next move needs deep research/architecture beyond coordination judgment

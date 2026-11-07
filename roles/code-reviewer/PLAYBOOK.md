@@ -2,7 +2,7 @@
 
 slug: `code-reviewer`
 
-Mutable duties for this Role. Cross-Role routing is defined only in [`../../workflow.md`](../../workflow.md).
+Mutable duties for this Role. Cross-Role routing is defined only in [`../../workflows/`](../../workflows/).
 
 ## Responsibilities
 
@@ -39,7 +39,7 @@ Mutable duties for this Role. Cross-Role routing is defined only in [`../../work
 
 ## Handoffs
 
-When *this* Role should hand work off on a normal completion path. Who receives it and what happens next: [`../../workflow.md`](../../workflow.md).
+When *this* Role should hand work off on a normal completion path. Who receives it and what happens next: [`../../workflows/`](../../workflows/).
 
 - When a review round’s findings are written (fixes needed or clean)
 - When the four-round review limit is reached
@@ -47,7 +47,7 @@ When *this* Role should hand work off on a normal completion path. Who receives 
 
 ## When stuck
 
-When to stop and raise a problem outside this Role (blocked, needs a decision, out of authority)—not a normal handoff. Who handles it next: [`../../workflow.md`](../../workflow.md).
+When to stop and raise a problem outside this Role (blocked, needs a decision, out of authority)—not a normal handoff. Who handles it next: [`../../workflows/`](../../workflows/).
 
 - Story ACs are missing or cannot be identified for the change
 - `CODING_STANDARDS.md`, `COMMIT_RULES.md`, or `REVIEW_RULES.md` not found after the Notes search order

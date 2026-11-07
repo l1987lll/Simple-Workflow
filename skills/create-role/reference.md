@@ -9,7 +9,7 @@ Read this when a field's meaning is unclear. Vocabulary matches repo-root `GLOSS
 | **Role-Playbook** (default) | `ROLE.md` + `PLAYBOOK.md` | Stable identity separate from mutable duties |
 | **Role-merged** | `ROLE.md` only | Simple Role or fewer files preferred |
 
-Do not describe layouts to the human as only「一个文档 / 两个文档」without the names and explanation above.
+Do not describe layouts to the human as only "one document / two documents" without the names and explanation above.
 
 ## What goes where
 
