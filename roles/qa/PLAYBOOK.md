@@ -2,7 +2,7 @@
 
 slug: `qa`
 
-Mutable duties for this Role. Cross-Role routing is defined only in [`../../workflow.md`](../../workflow.md).
+Mutable duties for this Role. Cross-Role routing is defined only in [`../../workflows/`](../../workflows/).
 
 ## Responsibilities
 
@@ -36,7 +36,7 @@ Mutable duties for this Role. Cross-Role routing is defined only in [`../../work
 
 ## Handoffs
 
-When *this* Role should hand work off on a normal completion path. Who receives it and what happens next: [`../../workflow.md`](../../workflow.md).
+When *this* Role should hand work off on a normal completion path. Who receives it and what happens next: [`../../workflows/`](../../workflows/).
 
 - When the pass/fail report is written and ready for whoever owns the next process step
 - When a failure needs a fix and testing cannot usefully continue until that fix lands
@@ -44,7 +44,7 @@ When *this* Role should hand work off on a normal completion path. Who receives 
 
 ## When stuck
 
-When to stop and raise a problem outside this Role (blocked, needs a decision, out of authority)—not a normal handoff. Who handles it next: [`../../workflow.md`](../../workflow.md).
+When to stop and raise a problem outside this Role (blocked, needs a decision, out of authority)—not a normal handoff. Who handles it next: [`../../workflows/`](../../workflows/).
 
 - Story ACs or bug expected result cannot be identified
 - Test environment, build, or required data/access is unavailable

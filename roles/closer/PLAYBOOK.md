@@ -2,7 +2,7 @@
 
 slug: `closer`
 
-Mutable duties for this Role. Cross-Role routing is defined only in [`../../workflow.md`](../../workflow.md).
+Mutable duties for this Role. Cross-Role routing is defined only in [`../../workflows/`](../../workflows/).
 
 ## Responsibilities
 
@@ -39,15 +39,16 @@ Mutable duties for this Role. Cross-Role routing is defined only in [`../../work
 
 ## Handoffs
 
-When *this* Role should hand work off on a normal completion path. Who receives it and what happens next: [`../../workflow.md`](../../workflow.md).
+When *this* Role should hand work off on a normal completion path. Who receives it and what happens next: [`../../workflows/`](../../workflows/).
 
 - When a cleanup or follow-up needs another Role’s permissions or craft
+- When retro materials are ready and a human-only skill such as `/retro` must run (hand to team-lead to remind the human)
 - When the retro summary and proposed follow-ups are ready for human confirmation
 - When close-out is complete (cleanup done, lessons captured, confirmed follow-ups finished or owned)
 
 ## When stuck
 
-When to stop and raise a problem outside this Role (blocked, needs a decision, out of authority)—not a normal handoff. Who handles it next: [`../../workflow.md`](../../workflow.md).
+When to stop and raise a problem outside this Role (blocked, needs a decision, out of authority)—not a normal handoff. Who handles it next: [`../../workflows/`](../../workflows/).
 
 - Acceptance/done status is unclear (e.g. QA not finished or disputed)
 - Cleanup needs access this Role cannot get and no owning Role responds
