@@ -60,17 +60,16 @@ When to stop and raise a problem outside this Role (blocked, needs a decision, o
 - Requirements conflict, are incomplete, or change mid-implementation
 - Needs an architecture or research call beyond normal coding judgment
 - Blocked by missing access, environments, or dependencies this Role cannot unblock
-- `CODING_STANDARDS.md` or `COMMIT_RULES.md` not found after the Notes search order
+- `CODING_STANDARDS.md` or `COMMIT_RULES.md` not found at `.workflow/project-standards/`
 - Review feedback asks for a product/process exception this Role must not decide alone
 
 ## Notes
 
 Prefer owning the vertical slice for a change (UI through data) unless the agreed requirement scopes this Role to a single layer.
 
-**Standards file lookup** (exactly one copy of each file exists; stop at the first hit):
+**Standards files** (mandatory; relative to the consumer project that holds `.workflow/`):
 
-1. `D:\DevelopmentGit\CODING_STANDARDS.md` / `D:\DevelopmentGit\COMMIT_RULES.md`
-2. Else the current workspace root (whatever tool opened the workspace)
-3. Else the git repository root for the code being changed
+- `.workflow/project-standards/CODING_STANDARDS.md`
+- `.workflow/project-standards/COMMIT_RULES.md`
 
-If neither file is found, stop and raise under When stuck—do not invent local standards.
+If a required file is missing, stop and raise under When stuck — do not invent local standards.

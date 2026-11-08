@@ -88,6 +88,18 @@ _Avoid_: chat log, memory, scratch notes
 One agent playing a Role in a run (for example `developer#2`). A Role may have more than one instance in the same run when path ownership is disjoint.
 _Avoid_: clone, copy, duplicate Role
 
+**Role-bot group**:
+One set of Role bots for the same consumer `.workflow/` install, distinguished by a naming prefix (for example `T1` or `T2`). A Role-bot group is one kind of Team, typically on an all-main-agents harness. Groups share the same Role cards, process documents, and standards; each group has its own bots, its own Team config, and may use its own sidebar section.
+_Avoid_: team copy, second install (that would be another `.workflow/` tree), re-setup (that is updating the installed trees)
+
+**Team (workflow instance)**:
+One agent team executing a process document (for example a Grok Role-bot group, or a Cursor lead chat with sub-agents). Multiple Teams may share one `.workflow/` install. Not a run.
+_Avoid_: session (except as informal shorthand for a chat), install (that is the `.workflow/` tree)
+
+**Team config**:
+`.workflow/teams/<id>.yaml` for one Team (`id` = platform team-lead id or GUID; filename stem equals `id`; not short `t1`/`t2`). v1 fields in order: `id`, `workflow`, `team_lead_id`, `harness`. Agents read their bound Team config path, then the `workflow` process document named inside. If either is missing, stop. Team config is the only current-workflow pointer.
+_Avoid_: process-document path written outside Team config, install (that is the `.workflow/` tree)
+
 **Handoff artifact**:
 A file a Role writes for another Role to read on an artifact route. Process artifacts live under the run folder; product code lives on the work branch.
 _Avoid_: attachment, drop, packet

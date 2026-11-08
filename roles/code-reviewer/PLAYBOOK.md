@@ -50,7 +50,7 @@ When *this* Role should hand work off on a normal completion path. Who receives 
 When to stop and raise a problem outside this Role (blocked, needs a decision, out of authority)—not a normal handoff. Who handles it next: [`../../workflows/`](../../workflows/).
 
 - Story ACs are missing or cannot be identified for the change
-- `CODING_STANDARDS.md`, `COMMIT_RULES.md`, or `REVIEW_RULES.md` not found after the Notes search order
+- `CODING_STANDARDS.md`, `COMMIT_RULES.md`, or `REVIEW_RULES.md` not found at `.workflow/project-standards/`
 - Diff/branch/PR access is unavailable
 - A finding needs a product or process exception this Role must not decide alone
 
@@ -58,10 +58,10 @@ When to stop and raise a problem outside this Role (blocked, needs a decision, o
 
 At most four review rounds per change; rounds 1–2 cover the full diff, rounds 3–4 only incremental changes. The same finding at most twice.
 
-**Rules file lookup** (exactly one copy of each file; stop at the first hit; the three files are usually in the same directory):
+**Rules files** (mandatory; relative to the consumer project that holds `.workflow/`; usually the same directory):
 
-1. `D:\DevelopmentGit\CODING_STANDARDS.md`, `D:\DevelopmentGit\COMMIT_RULES.md`, `D:\DevelopmentGit\REVIEW_RULES.md`
-2. Else the current workspace root (whatever tool opened the workspace)
-3. Else the git repository root for the code under review
+- `.workflow/project-standards/CODING_STANDARDS.md`
+- `.workflow/project-standards/COMMIT_RULES.md`
+- `.workflow/project-standards/REVIEW_RULES.md`
 
-If any required rules file is missing, stop under When stuck—do not invent local rules.
+If any required rules file is missing, stop under When stuck — do not invent local rules.
