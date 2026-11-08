@@ -8,25 +8,25 @@ Tracked work that is not done in Role cards or process documents yet.
 **Raised:** 2026-11-08  
 **Context:** More than one process document exists under `workflows/` (`main-with-subagents.md` for Cursor/DSH, `all-main-agents.md` for Grok Bot). Role cards currently point at the `workflows/` directory, not a single file.
 
-**Interim:** Keep Role/Playbook links to [`workflows/`](workflows/). Do not use the phrasing "active process document for this run" in Role cards.
+**Interim:** Keep Role/Playbook links to [`workflows/`](workflows/). Do not use the phrasing "active process document for this run" in Role cards. Agents must read their bound Team config under `.workflow/teams/`, then that process document; if either is missing, stop.
 
-**Planned fix:** A future **install-workflow** skill chooses which `workflows/*.md` is active for a harness/environment (optional pointer file). Until then, selection stays unresolved in-repo.
+**Planned fix:** [`setup-workflow`](skills/setup-workflow/SKILL.md) (formerly referred to as install-workflow) writes `.workflow/teams/<id>.yaml` in a consumer project (one file per Team). Each file records `id`, `workflow` (a path relative to `.workflow/workflows/`), `team_lead_id`, and `harness`. Team config is the only current-workflow pointer. Role cards keep pointing at the `workflows/` directory.
 
 
 
 ## OI-002 — `.gitignore` policy for `runs/`
 
-**Status:** parked (ignore for now)  
+**Status:** done  
 **Raised:** 2026-11-08  
-**Summary:** Decide whether `runs/` (STATUS and handoff artifacts) is committed, ignored, or partially ignored.
+**Done:** In a consumer project the entire `.workflow/` directory (including `runs/`) is gitignored. `setup-workflow` ensures the consumer `.gitignore` contains `.workflow/`. The kit repo itself still tracks `roles/`, `workflows/`, and `runs/_template/`.
 
 ---
 
-## OI-003 — Confirm craft-tool files per pair in process documents
+## OI-003 — Confirm standards-tool files per pair in process documents
 
-**Status:** open  
+**Status:** done  
 **Raised:** 2026-11-08  
-**Summary:** Playbooks depend on `CODING_STANDARDS.md`, `COMMIT_RULES.md`, and `REVIEW_RULES.md`. Process documents do not yet record per-pair confirmation that those files are reachable.
+**Done:** Handled by [`setup-workflow`](skills/setup-workflow/SKILL.md): kit templates in [`project-standards/`](project-standards/) copy to `.workflow/project-standards/` and Playbooks are rewritten to those paths automatically (no detection ask).
 
 ---
 
