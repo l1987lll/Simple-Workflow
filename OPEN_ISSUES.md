@@ -42,3 +42,12 @@ Tracked work that is not done in Role cards or process documents yet.
 **Raised:** 2026-11-08  
 **Done:** Added a matching Handoff bullet to `roles/closer/PLAYBOOK.md` for handing human-only skills such as `/retro` to team-lead to remind the human.
 
+## OI-006 — Role templates point at a `workflow.md` that does not exist
+
+**Status:** open  
+**Raised:** 2026-11-15  
+**Context:** All three files under `skills/create-role/templates/` tell a new Role to read `../../workflow.md`, but the repo root has no such file: process documents live under `workflows/`, and OI-001 fixes the pointer at that directory. A card created today ships a broken link, and the skill only warns when the target is missing.  
+**Interim:** Keep existing and revised cards pointing at `workflows/`; a revision keeps a card's pointer text as it is.  
+**Planned fix:** Point the three templates and the `## Required reading` wording at `../../workflows/`, then drop the "if `workflow.md` is missing, warn only" step from [`create-role`](skills/create-role/SKILL.md).
+
+
