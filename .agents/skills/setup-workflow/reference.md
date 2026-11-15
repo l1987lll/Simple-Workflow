@@ -75,7 +75,7 @@ An **existing install** is present when any of these already has content:
 
 Also treat the run as re-setup when the human asked to re-setup, sync, add a Role-bot group, or reinstall after kit Role or process-document changes, even if detection is partial. A populated legacy `workflow/` tree (no leading dot) also counts as an existing install. Tell the human the consumer directory is now `.workflow/` and ask before copying, so a second tree is not created beside the old one. Do not use bare `workflow/` as the new install directory. An empty or missing `.workflow/` (and no populated legacy `workflow/` tree) with no such ask is a first install; skip the Re-setup questions.
 
-A **Role-bot group** is one set of Role bots for the same consumer `.workflow/` install, distinguished by a naming prefix (for example `T1` or `T2`). A Role-bot group is one kind of Team, typically on an all-main-agents harness. Groups share the same Role cards, process documents, and standards; each group has its own bots, its own Team config, and may use its own sidebar section. See repo-root `GLOSSARY.md`.
+A **Role-bot group** is one kind of Team: see [Add Role-bot group](#add-role-bot-group) for its definition and create flow.
 
 Before asking, report:
 

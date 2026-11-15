@@ -108,13 +108,13 @@ A missing line is `uncertain`. After each result, say that pair's unsupported an
 
 **Slash.** Label each command a Role card or the accepted workflow names. Support is per command.
 
-### 3. Opens Choose workflow
+### 3. Create or revise
 
 Revise: read the chosen file, restate caveats, ask what changes. Keeping the shape skips the menu in step 4. Steps 5–6 still run.
 
 Create: continue to step 4. Default path `workflows/workflow.md` unless the human named another file under `workflows/`.
 
-### 4. Choose workflow
+### 4. Workflows
 
 Read each Role card, including `PLAYBOOK.md` or the Playbook region. Draft from Handoffs and When stuck. Who is next is this file; when work leaves stays on the Role card.
 
@@ -158,7 +158,7 @@ Walk the accepted workflow once. A failure is discussed: name the pair, the rout
 7. Craft tool — a tool named in a Role's Steps that a route depends on is confirmed per pair
 8. Run state — STATUS path, single writer, instance fields, artifact layout, path-ownership rule
 
-### 7. Write
+### 7. Write and report
 
 Fill `templates/workflow.md`. English. One slash row per command; omit slash when the workflow calls none. One handoff table and one when-stuck table per slug. Caveats `(none)` when nothing was kept. Report the path. Leave Role cards unchanged.
 
