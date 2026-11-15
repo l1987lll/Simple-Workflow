@@ -23,13 +23,13 @@ A simple AI Agent workflow with customizable roles and process documents.
 
 | Skill | What it does |
 |---|---|
-| [`create-role`](skills/create-role/SKILL.md) | Interviews you, then scaffolds a Role card under `roles/<slug>/` (Role-Playbook default, or Role-merged), or revises an existing card section by section |
+| [`define-role`](skills/define-role/SKILL.md) | Interviews you, then scaffolds a Role card under `roles/<slug>/` (Role-Playbook default, or Role-merged), or revises an existing card section by section |
 | [`define-workflow`](skills/define-workflow/SKILL.md) | Interviews you for harness, environment, support, workflow shape, and run state, then creates or revises a process document under `workflows/` |
 | [`setup-workflow`](skills/setup-workflow/SKILL.md) | Sets up the kit in a consumer project's `.workflow/` directory (roles, process documents, run templates, project-standards templates, and Team config files) |
 
 ## Roles
 
-Roles live in [`roles/`](roles/), one folder each, written by [`create-role`](skills/create-role/SKILL.md).
+Roles live in [`roles/`](roles/), one folder each, written by [`define-role`](skills/define-role/SKILL.md).
 
 A Role is a Markdown card an agent loads to act in that capacity. The default Role-Playbook layout splits it into a stable `ROLE.md` (name, slug, purpose, boundaries, required reading) and a mutable `PLAYBOOK.md` (responsibilities, steps, checklists, handoffs, when stuck, notes). Role-merged puts both in one file. Cards stay local to their own Role: cross-Role routing is not written into them.
 
@@ -64,7 +64,7 @@ A **run** is one team execution of a process document. Copy [`runs/_template/`](
 - [`GLOSSARY.md`](GLOSSARY.md) — vocabulary for Role cards and process documents
 - [`OPEN_ISSUES.md`](OPEN_ISSUES.md) — open and deferred issues
 - [`AGENTS.md`](AGENTS.md) — work only on a branch; do not commit directly to `develop` or `master`
-- [`docs/create-role/spec.md`](docs/create-role/spec.md) — design spec for `create-role`
+- [`docs/define-role/spec.md`](docs/define-role/spec.md) — design spec for `define-role`
 - [`docs/define-workflow/spec.md`](docs/define-workflow/spec.md) — design spec for `define-workflow`
 - [`docs/setup-workflow/team-config-design.md`](docs/setup-workflow/team-config-design.md) — design: Team config files
 - [`docs/setup-workflow/team-config-implementation-plan.md`](docs/setup-workflow/team-config-implementation-plan.md) — implementation plan for Team configs

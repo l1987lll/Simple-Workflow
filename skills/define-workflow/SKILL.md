@@ -12,7 +12,7 @@ This skill file is English only. Generated process Markdown is English. Explain 
 
 ## Hard rules
 
-- When `roles/` has no Role card, stop and point the human at `create-role`.
+- When `roles/` has no Role card, stop and point the human at `define-role`.
 - The process document names only slugs that already exist under `roles/`. Ask for an existing slug when a route names one that does not.
 - Write the process document only. Default directory is repo-root `workflows/`. Default path for a first create is `workflows/workflow.md`. Use another file name under `workflows/` when the human names one (for example `workflows/main-with-subagents.md`). When the human wants more than one process document, write each as its own file under `workflows/`; do not merge them into one file unless they ask. Do not write new process documents at repo root.
 - At Gate, list existing process documents as well as Roles. If any exist and the human has not said create versus revise which file, ask before continuing.
@@ -42,7 +42,7 @@ List every `roles/*/ROLE.md`: slug and one-line purpose.
 
 List every process document already in the repo. Discover `workflows/*.md`. Also list legacy repo-root `workflow.md` and repo-root `workflow-*.md` if any still exist, and offer to move a revised file into `workflows/` on write. For each file found, give its path and a one-line shape summary from its opening (for example one main agent with sub-agents, or every Role a main agent). If none exist, say none.
 
-If no Role card exists, stop and point the human at `create-role`.
+If no Role card exists, stop and point the human at `define-role`.
 
 If at least one process document exists, and the human has not already made clear whether this run **creates a new** process document or **revises** a named existing one, ask before any later interview step. Use these words:
 

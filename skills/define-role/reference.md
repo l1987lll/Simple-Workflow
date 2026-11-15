@@ -1,4 +1,4 @@
-# create-role reference
+# define-role reference
 
 Read this when a field's meaning is unclear, or when revising a card and a required piece looks missing. Vocabulary matches repo-root `GLOSSARY.md`.
 

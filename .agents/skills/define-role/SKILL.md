@@ -1,12 +1,12 @@
 ---
-name: create-role
+name: define-role
 description: Create a Role card under roles/<slug>/, or revise an existing card section by section.
 disable-model-invocation: true
 ---
 
-# create-role
+# define-role
 
-Create a new Role card from `templates/`, or revise one under `roles/` in place. Spec, from the repo root: `docs/create-role/spec.md`. Field help: [reference.md](reference.md).
+Create a new Role card from `templates/`, or revise one under `roles/` in place. Spec, from the repo root: `docs/define-role/spec.md`. Field help: [reference.md](reference.md).
 
 ## Hard rules
 

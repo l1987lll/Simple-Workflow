@@ -9,7 +9,7 @@ A named participation slot in the workflow (for example Team Lead or QA). A Role
 _Avoid_: persona, job, hat
 
 **Role card**:
-The Markdown document set that defines one Role for an agent to load. Created by `create-role`.
+The Markdown document set that defines one Role for an agent to load. Created by `define-role`.
 _Avoid_: agent definition, skill, prompt pack
 
 **ROLE.md**:
@@ -33,7 +33,7 @@ Optional Role card shape: one `ROLE.md` with a stable upper section and a mutabl
 _Avoid_: Role-only, single-document layout, monolith
 
 **Process document** (`workflows/*.md`):
-End-to-end workflow and how Roles interact, including each pair's support for the interactions it uses. Lives under `workflows/`, outside Role cards. `define-workflow` creates and edits these files. `create-role` does not. Informal shorthand may still say workflow.md.
+End-to-end workflow and how Roles interact, including each pair's support for the interactions it uses. Lives under `workflows/`, outside Role cards. `define-workflow` creates and edits these files. `define-role` does not. Informal shorthand may still say workflow.md.
 _Avoid_: playbook, pipeline doc
 
 **Harness**:
