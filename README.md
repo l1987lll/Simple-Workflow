@@ -39,6 +39,7 @@ A Role is a Markdown card an agent loads to act in that capacity. The default Ro
 |---|---|
 | [`manager`](roles/manager/ROLE.md) | Manages the other Roles for the human: assignments, priorities, and status, with one owner per piece of work |
 | [`team-lead`](roles/team-lead/ROLE.md) | Clarifies tasks with the human, assigns and coordinates other Roles, and keeps work unblocked until it is done |
+| [`workflow-owner`](roles/workflow-owner/ROLE.md) | Owns the project's `.workflow/` tree—process documents, Role cards, run templates, Team configs—and keeps them true as the workflow changes |
 | [`research-architect`](roles/research-architect/ROLE.md) | Researches unfamiliar domains and hard design problems, and produces grounded architecture and plans without implementing code |
 | [`ui-ux-designer`](roles/ui-ux-designer/ROLE.md) | Turns interface requirements into a reviewable design—layout, flows, states, visual specs—with a clickable prototype, without writing product code |
 | [`developer`](roles/developer/ROLE.md) | Implements product changes across the stack—from UI through APIs and data—according to the agreed requirements |
