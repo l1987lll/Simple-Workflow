@@ -45,6 +45,7 @@ A Role is a Markdown card an agent loads to act in that capacity. The default Ro
 | [`code-reviewer`](roles/code-reviewer/ROLE.md) | Reviews branch/PR changes against acceptance criteria, coding standards, commit rules, and review rules without implementing the fix |
 | [`qa`](roles/qa/ROLE.md) | Tests the change as a tester or user: requirements and acceptance criteria, likely edge cases, and impact on existing features |
 | [`closer`](roles/closer/ROLE.md) | Drives close-out once a task is accepted: cleanup, lessons learned, `/retro`, and human-confirmed follow-ups |
+| [`assistant`](roles/assistant/ROLE.md) | Runs the human's personal chores—answers, drafts, research, reminders, local scripts, computer setup—and keeps project and business work with the project Roles |
 
 ## Workflows
 
