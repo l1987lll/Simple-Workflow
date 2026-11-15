@@ -19,7 +19,7 @@ Provide a project skill `define-workflow` that interviews the human and creates 
 | Output directory | `workflows/`. Default first file: `workflows/workflow.md`. Another name only when the human names it. Several workflows are several files. Do not merge them unless asked. Do not write a new process document at repo root |
 | Legacy files | Gate also lists repo-root `workflow.md` and `workflow-*.md` if present, and may move a revised file into `workflows/` on write |
 | Doc language | English in the process document. Interview in the human's language (often Chinese). A few ask-lines are fixed Chinese |
-| Invocation | User-invoked (`disable-model-invocation: true`) |
+| Invocation | Model-invoked: the always-loaded `description` names both create and revise |
 | Interaction names | This skill's catalog. Not words every agent already has. Say that in the human's language. |
 | Support labels | `supported`, `unsupported`, or `uncertain`. A label belongs to one pair |
 | `subagent-depth` | `none`, a number of further levels, or `uncertain`. Do not say "depth" as a substitute field name; the field is `subagent-depth` |
@@ -191,7 +191,7 @@ From `templates/workflow.md`: Targets, Support, Conditions (mode, human at hando
 ## SKILL.md behavior
 
 - `name`: `define-workflow`
-- `disable-model-invocation: true`
+- `disable-model-invocation` omitted: the agent can fire the skill on its own, and other skills can reach it
 - Read `reference.md` for session identity, the this-session test, uncertain sentences, and offer shape
 - Read `docs/agent-docs.md` for how the process document must read; read each written file back before reporting
 - Read `templates/support-prompt.md` when another pair must be judged
