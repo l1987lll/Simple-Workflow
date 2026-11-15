@@ -11,7 +11,7 @@ A simple AI Agent workflow with customizable roles and process documents.
 | [`roles/`](roles/) | Role cards agents load to act in a capacity |
 | [`workflows/`](workflows/) | Process documents (how Roles collaborate) |
 | [`skills/`](skills/) | Skills that create or revise roles and workflows, or set up the kit in a consumer project |
-| [`.agents/skills/`](.agents/skills/) | Committed copy of `skills/` for tools that scan that path |
+| [`.agents/skills/`](.agents/skills/) | Committed copies of the repo's skills, plus any outside skill the repo calls, for tools that scan that path |
 | [`runs/_template/`](runs/_template/) | STATUS and brief templates for a live run |
 | [`project-standards/`](project-standards/) | Coding, commit, and review standards templates shipped with the kit |
 | [`docs/`](docs/) | Design specs for skills |
@@ -19,7 +19,7 @@ A simple AI Agent workflow with customizable roles and process documents.
 | [`OPEN_ISSUES.md`](OPEN_ISSUES.md) | Open and deferred project issues |
 | [`AGENTS.md`](AGENTS.md) | Branching rules for agents working in this repo |
 
-`skills/` is the source of truth. After editing a skill, copy its folder into `.agents/skills/` so the two trees stay identical.
+`skills/` is the source of truth for the skills this repo produces. After editing one, copy its folder into `.agents/skills/`.
 
 ## Skills
 
