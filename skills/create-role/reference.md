@@ -1,6 +1,6 @@
 # create-role reference
 
-Read this when a field's meaning is unclear. Vocabulary matches repo-root `GLOSSARY.md`.
+Read this when a field's meaning is unclear, or when revising a card and a required piece looks missing. Vocabulary matches repo-root `GLOSSARY.md`.
 
 ## Layout names
 
@@ -26,6 +26,18 @@ Do not describe layouts to the human as only "one document / two documents" with
 
 Both sections may say *when*; neither defines *who next*—that is `workflow.md`.
 
+## Required pieces (existing card)
+
+| Part | Must have |
+|---|---|
+| `ROLE.md` | `# <name>` title, `- **slug:**` line, `- **layout:**` line, `## Purpose`, `## Boundaries`, `## Required reading` pointing at the Playbook |
+| `PLAYBOOK.md` (Role-Playbook) | `# <name> — Playbook`, a slug line, and the six sections `## Responsibilities` `## Steps` `## Checklists` `## Handoffs` `## When stuck` `## Notes` |
+| `## Playbook` region (Role-merged) | the same six sections at `###` |
+
+A missing piece is offered as a section to fill during the revision; the card's own pointers, heading order, and hand-written prose stay as they are.
+
+Existing cards may predate the current templates: the six business Roles point at `../../workflows/`, not the templates' `../../workflow.md`. Keep the card's pointer text—restoring template wording would break it.
+
 ## Placeholders
 
 `{{NAME}}` `{{SLUG}}` `{{PURPOSE}}` `{{BOUNDARIES}}` `{{SPEAKING_STYLE_SECTION}}` `{{RESPONSIBILITIES}}` `{{STEPS}}` `{{CHECKLISTS}}` `{{HANDOFFS}}` `{{WHEN_STUCK}}` `{{NOTES}}`
@@ -41,7 +53,7 @@ Both sections may say *when*; neither defines *who next*—that is `workflow.md`
 
 (include the trailing newline so the following `## Boundaries` stays spaced).
 
-Skipped Playbook bodies: `(none yet)`.
+Skipped Playbook bodies on a new card: `(none yet)`. A revision leaves a skipped section's text as it is; `(none yet)` applies only when the human clears it.
 
 ## Tiny example (fictional)
 
