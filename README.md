@@ -1,5 +1,7 @@
 # Simple-Workflow
 
+[![docs check](https://github.com/l1987lll/Simple-Workflow/actions/workflows/check-docs.yml/badge.svg)](https://github.com/l1987lll/Simple-Workflow/actions/workflows/check-docs.yml)
+
 A simple AI Agent workflow with customizable roles and process documents.
 
 ## Layout
