@@ -6,6 +6,8 @@ The reader acts on this file without asking a human. A doc earns its space by ch
 
 A Role card or process document is copied into a consumer project's `.workflow/`; this `docs/` tree is not. State every rule the reader needs inside the artifact, and point only at paths that ship with it—`../../workflows/`, not a docs page the consumer never receives.
 
+Keep machine paths, usernames, and organization names out of a shipped artifact: write the consumer-relative path, or a placeholder the reader fills in.
+
 ## Steps and reference
 
 Decide which one you are writing before the first line.

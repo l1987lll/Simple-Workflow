@@ -1,8 +1,10 @@
-# Commit rules (local)
+# Commit rules
 
-Supplements the company `/commit` skill. Local deltas only. Empty TBD sections are placeholders — do not invent rules from them. Treat a section as binding only when it has real bullets.
+Project rules the Roles follow when they create a commit. This file ships as a template: fill in what this project requires.
 
-**When to load:** any time you create a git commit under `DevelopmentGit`.
+**When to load:** any time you create a git commit in this project.
+
+Empty `_(TBD)_` sections are placeholders — do not invent rules from them. Treat a section as binding only when it has real bullets.
 
 ## Message format and trailers
 
