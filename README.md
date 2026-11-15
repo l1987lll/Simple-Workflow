@@ -64,6 +64,7 @@ A **run** is one team execution of a process document. Copy [`runs/_template/`](
 - [`GLOSSARY.md`](GLOSSARY.md) — vocabulary for Role cards and process documents
 - [`OPEN_ISSUES.md`](OPEN_ISSUES.md) — open and deferred issues
 - [`AGENTS.md`](AGENTS.md) — work only on a branch; do not commit directly to `develop` or `master`
+- [`docs/agent-docs.md`](docs/agent-docs.md) — how to write the Role cards, Playbooks, and process documents an agent reads
 - [`docs/define-role/spec.md`](docs/define-role/spec.md) — design spec for `define-role`
 - [`docs/define-workflow/spec.md`](docs/define-workflow/spec.md) — design spec for `define-workflow`
 - [`docs/setup-workflow/team-config-design.md`](docs/setup-workflow/team-config-design.md) — design: Team config files
