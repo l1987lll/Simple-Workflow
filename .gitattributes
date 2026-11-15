@@ -1,0 +1,4 @@
+# Store text as LF in the repository and in every checkout, including Windows.
+# The kit is read by agents on several platforms, and the .agents mirrors are kept
+# byte-identical, so the working tree must not depend on each machine's autocrlf.
+* text=auto eol=lf
