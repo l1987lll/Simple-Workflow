@@ -44,7 +44,7 @@ A directory is the Simple-Workflow **kit itself** (not an install target) when i
 A path is a valid **install root** for Target when it is **not** the Simple-Workflow kit itself. Prefer and list first:
 
 1. **Current working directory / current workspace root** (preferred default) — show the real path when asking
-2. A path the human types or names (single consumer repo, or a **multi-repo parent** such as `D:\DevelopmentGit` — install `.workflow/` directly under that parent as `D:\DevelopmentGit\.workflow/`; do **not** require picking a child repo)
+2. A path the human types or names (single consumer repo, or a **multi-repo parent** — install `.workflow/` directly under that parent as `<parent>/.workflow/`; do **not** require picking a child repo)
 
 Do not present a sibling-repo multiple-choice list as the primary Target ask. The consumer directory name is always `.workflow/` (leading dot), never bare `workflow/`.
 
@@ -59,11 +59,9 @@ Stop at the first valid source.
    - a sibling of the consumer project named `Simple-Workflow`
    - `../Simple-Workflow` relative to the consumer
    - `<consumer-parent>/Simple-Workflow`
-   - `~/DevelopmentGit/Simple-Workflow`
    - `~/src/Simple-Workflow`
    - `~/dev/Simple-Workflow`
    - `~/code/Simple-Workflow`
-   - `D:\DevelopmentGit\Simple-Workflow` when that path exists on Windows
 3. **Ask the human** for the source directory.
 
 ## Existing install and re-setup

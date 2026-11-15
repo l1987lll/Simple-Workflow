@@ -112,7 +112,7 @@ Say the step name, then explain it in 1-2 sentences, then ask when a choice is n
 
 This step's name is Target.
 
-The destination is always `<chosen-path>/.workflow/` (leading dot required — never bare `workflow/`) under whatever directory the human picks as the install root - a single consumer repo, the current workspace, or a multi-repo parent (e.g. `D:\DevelopmentGit` -> `D:\DevelopmentGit\.workflow/`). That is allowed; do not require picking a child repo. Do **not** install into the Simple-Workflow kit itself as if it were a consumer.
+The destination is always `<chosen-path>/.workflow/` (leading dot required — never bare `workflow/`) under whatever directory the human picks as the install root - a single consumer repo, the current workspace, or a multi-repo parent (e.g. `<parent>` -> `<parent>/.workflow/`). That is allowed; do not require picking a child repo. Do **not** install into the Simple-Workflow kit itself as if it were a consumer.
 
 - If the human already named an install path this run (and it is not the kit), use it (do not re-ask).
 - Otherwise **ask the human** (human action). The ask **must** offer **current working directory / current workspace** as the **first and preferred** option (this session's working directory / open workspace root). Then offer typing or naming another path. Recommend the current working directory unless they already said otherwise.
