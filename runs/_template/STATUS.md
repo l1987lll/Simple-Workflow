@@ -16,7 +16,7 @@ Copy this folder to `runs/<run-id>/` and fill in the fields. Only `team-lead` up
 
 ## Instances
 
-One row per in-flight Role instance. Add rows as needed. Parallel instances must have disjoint path ownership before editing.
+One row per in-flight Role instance. Parallel instances must have disjoint path ownership before editing.
 
 | Role | Instance id | Agent id | Slice | Path ownership | Phase | Artifacts | Waiting on |
 |---|---|---|---|---|---|---|---|

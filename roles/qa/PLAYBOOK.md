@@ -23,6 +23,8 @@ Mutable duties for this Role. Cross-Role routing is defined only in [`../../work
 5. Spot-check related existing features for unintended impact
 6. Write a pass/fail report with steps to reproduce any failure
 
+Done when every checklist item below passes.
+
 ## Checklists
 
 **Before signing off**

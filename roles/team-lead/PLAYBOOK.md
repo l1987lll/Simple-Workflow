@@ -27,6 +27,8 @@ Mutable duties for this Role. Cross-Role routing is defined only in [`../../work
 3. Check progress; unblock or re-brief when needed
 4. Confirm the task is complete against the agreed done-when
 
+Done when every checklist item below passes.
+
 ## Checklists
 
 **Before assigning**

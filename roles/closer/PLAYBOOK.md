@@ -21,9 +21,11 @@ Mutable duties for this Role. Cross-Role routing is defined only in [`../../work
 2. Inventory leftovers: worktrees, temp scripts, scratch files, unfinished notes
 3. Clean what this Role can; request other Roles for anything blocked by permissions
 4. Write a short lessons-learned note
-5. Run `/retro` (what went well, poorly, what to improve)—involve other Roles as needed
+5. Run `/retro` (what went well, poorly, what to improve); ask the other Roles for their input before writing the summary
 6. List proposed follow-ups; get human confirmation before fixing them
 7. Track confirmed follow-ups to done (self or by asking the owning Role)
+
+Done when every checklist item below passes.
 
 ## Checklists
 

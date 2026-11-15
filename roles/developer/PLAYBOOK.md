@@ -26,6 +26,8 @@ Mutable duties for this Role. Cross-Role routing is defined only in [`../../work
 7. When committing, locate and follow `COMMIT_RULES.md` (same search order as coding standards)
 8. When review is complete, package what QA needs to test
 
+Done when every checklist item below passes.
+
 ## Checklists
 
 **Before asking for review**

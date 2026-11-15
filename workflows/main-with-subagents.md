@@ -56,7 +56,7 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 4. developer returns a reviewable branch/PR; team-lead spawns or resumes code-reviewer.
 5. Review loops (at most four rounds): findings go to team-lead, which resumes developer, then resumes code-reviewer for the next pass.
 6. When review is clear or the round limit is hit, team-lead spawns qa.
-7. On QA failure, team-lead resumes developer then `qa` as needed. On QA pass, team-lead confirms done-when with the human (gate), then spawns closer.
+7. On QA failure, team-lead resumes `developer` with the failure report, then resumes `qa` for a re-test. On QA pass, team-lead confirms done-when with the human (gate), then spawns closer.
 8. closer inventories cleanup and lessons; for /retro and any other human-only skill, returns to team-lead, which reminds the human to run it. Follow-ups are proposed to the human via team-lead (gate) before anyone applies them.
 9. Parallel is allowed when team-lead starts independent slices that do not edit the same files; otherwise Roles run one after another through team-lead.
 10. `team-lead` may spawn or message multiple `developer` instances in parallel (`developer#1`, `developer#2`, …) when `STATUS.md` records disjoint path ownership for each instance; otherwise serialize.
