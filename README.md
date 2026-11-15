@@ -54,7 +54,7 @@ Process documents live in [`workflows/`](workflows/), written by [`define-workfl
 
 | Document | Shape | Typical targets |
 |---|---|---|
-| [`workflows/main-with-subagents.md`](workflows/main-with-subagents.md) | One main agent (`team-lead`); other Roles as sub-agents | Cursor + DSH (Local IDE chat) |
+| [`workflows/main-with-subagents.md`](workflows/main-with-subagents.md) | Four main agents (`manager`, `team-lead`, `assistant`, `workflow-owner`); other Roles as sub-agents of `team-lead` | Cursor + DSH (Local IDE chat) |
 | [`workflows/all-main-agents.md`](workflows/all-main-agents.md) | Every Role is a main agent / bot | Grok Bot |
 
 In a consumer project, [`setup-workflow`](skills/setup-workflow/SKILL.md) writes `.workflow/teams/<id>.yaml` so that Team knows which process document to load. Agents read their bound Team config path, then the `workflow` file named inside. Role cards still point at the `workflows/` directory ([OI-001](OPEN_ISSUES.md)). Setup also copies [`project-standards/`](project-standards/) into `.workflow/project-standards/` (`CODING_STANDARDS.md`, `COMMIT_RULES.md`, `REVIEW_RULES.md`) and rewrites Role Playbooks to require those paths (no separate detection or confirm step). Setup reminds the human they can add project-specific rules into those files for Roles to follow.
