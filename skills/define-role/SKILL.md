@@ -9,15 +9,15 @@ Create a new Role card from `templates/`, or revise one under `roles/` in place.
 
 ## Hard rules
 
-- Do not create or edit `workflow.md`
-- Do not register Cursor Agents or sub-agents
+- Write only the card; a process document under `workflows/` belongs to `define-workflow`
+- Do not register Cursor Agents or sub-agents; the card is the only artifact this skill writes
 - Generated Markdown is English; explain and ask in the human's language (often Chinese)
 - Write the card as a doc an agent reads: follow `docs/agent-docs.md`—one action per bullet, steps before reference, every pointer naming a path that ships with the card
 - Write only when the needed answers are in: a new Role needs the layout and a valid new slug; a revision needs a confirmed section pick
 - A revision edits nothing before the human confirms the section pick
 - Playbook answer skipped → `(none yet)` on a new card; on a revision a skipped section keeps its current text, and only a section the human clears becomes `(none yet)`
 - Speaking style **default** → no `## Speaking style` heading: empty `{{SPEAKING_STYLE_SECTION}}` on a new card, heading and body deleted on a revision
-- A revision changes only the picked sections; every line outside them stays byte-identical, including the layout, the slug, and the `workflow.md` / `workflows/` pointers
+- A revision changes only the picked sections; every line outside them stays byte-identical, including the layout, the slug, and the `workflows/` pointers
 
 ## Entry: new or existing
 
@@ -60,7 +60,7 @@ Ask for purpose.
 
 ### 4. Boundaries
 
-Explain: what this Role is *not* responsible for. Cross-Role routing stays in `workflow.md`.
+Explain: what this Role is *not* responsible for. Cross-Role routing stays in the process document under `workflows/`.
 
 Ask for boundaries.
 
@@ -81,7 +81,7 @@ Custom value—`{{SPEAKING_STYLE_SECTION}}` on a new card, an inserted section o
 
 ### 6a–6f. Playbook (one question each)
 
-Before each: say what the section is for, and that *who is next* lives in `workflow.md`. On a new card skip is allowed; on a revision each of these keeps its current text unless the human changes it.
+Before each: say what the section is for, and that *who is next* lives in the process document under `workflows/`. On a new card skip is allowed; on a revision each of these keeps its current text unless the human changes it.
 
 | Step | Section | Explain |
 |---|---|---|
@@ -98,7 +98,7 @@ Before each: say what the section is for, and that *who is next* lives in `workf
 2. Substitute placeholders
 3. Read the written files back; fix a broken list item or a stray line
 4. List written paths
-5. If repo-root `workflow.md` is missing, warn only—do not create it
+5. If `workflows/` has no process document yet, warn only—do not create one
 
 ## Revise an existing Role
 
@@ -135,8 +135,8 @@ Run the matching questions from the interview with their explanations.
 - [ ] `ROLE.md` written; Role-Playbook also has `PLAYBOOK.md`
 - [ ] Stable fields filled; speaking style written or omitted per rule
 - [ ] All six Playbook headings present
-- [ ] `workflow.md` pointers present; Role-Playbook has required `./PLAYBOOK.md` read; Role-merged stable top requires reading Playbook region below
-- [ ] `workflow.md` untouched
+- [ ] `workflows/` pointer present; Role-Playbook has required `./PLAYBOOK.md` read; Role-merged stable top requires reading Playbook region below
+- [ ] No process document written
 - [ ] Written files read back; no broken list item or stray line
 - [ ] Paths reported to the human
 
@@ -146,6 +146,6 @@ Run the matching questions from the interview with their explanations.
 - [ ] Only the picked sections changed; `git diff` shows nothing else
 - [ ] Layout, slug, and workflow pointers untouched
 - [ ] Skipped sections untouched; cleared sections `(none yet)`
-- [ ] `workflow.md` untouched
+- [ ] No process document written
 - [ ] Written files read back; no broken list item or stray line
 - [ ] Changed sections and paths reported

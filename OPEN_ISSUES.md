@@ -44,10 +44,8 @@ Tracked work that is not done in Role cards or process documents yet.
 
 ## OI-006 — Role templates point at a `workflow.md` that does not exist
 
-**Status:** open  
+**Status:** done  
 **Raised:** 2026-11-15  
-**Context:** All three files under `skills/define-role/templates/` tell a new Role to read `../../workflow.md`, but the repo root has no such file: process documents live under `workflows/`, and OI-001 fixes the pointer at that directory. A card created today ships a broken link, and the skill only warns when the target is missing.  
-**Interim:** Keep existing and revised cards pointing at `workflows/`; a revision keeps a card's pointer text as it is.  
-**Planned fix:** Point the three templates and the `## Required reading` wording at `../../workflows/`, then drop the "if `workflow.md` is missing, warn only" step from [`define-role`](skills/define-role/SKILL.md).
+**Done:** All three templates now point at `../../workflows/`, matching OI-001. [`define-role`](skills/define-role/SKILL.md) warns only when `workflows/` holds no process document, and the spec and reference were updated with the templates.
 
 

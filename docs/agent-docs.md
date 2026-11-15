@@ -48,7 +48,7 @@ After: "Hand off only after a review pass; list findings in `review/`."
 
 - [ ] Markdown renders: no bullet broken across lines, no stray blank line inside a list, no paragraph continuation starting at column 1
 - [ ] Every step has a criterion that reads true or false from the written file
-- [ ] Every pointer names an existing path that ships with the artifact, and says when to read it
+- [ ] Every pointer names an existing path that ships with the artifact, and says when to read it (a template's pointer resolves in the generated file's folder, not the template's)
 - [ ] No rule stated twice; nothing restated that the file tree already shows
 - [ ] Names match `GLOSSARY.md`
 - [ ] The written file read back once, as its reader

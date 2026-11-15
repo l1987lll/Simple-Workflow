@@ -6,7 +6,7 @@ Status: approved
 
 ## Intent
 
-Provide a project skill `define-role` that interviews the human and either creates a Role card under `roles/<slug>/` or revises an existing one in place. Role cards are Markdown for agents to load later. This spec covers the skill only—not the six business roles and not `workflow.md` content.
+Provide a project skill `define-role` that interviews the human and either creates a Role card under `roles/<slug>/` or revises an existing one in place. Role cards are Markdown for agents to load later. This spec covers the skill only—not the six business roles and not process-document content.
 
 ## Decisions
 
@@ -23,7 +23,7 @@ Provide a project skill `define-role` that interviews the human and either creat
 | Revision source | The card in `roles/`, never the templates |
 | Default layout | **Role-Playbook** (`ROLE.md` + `PLAYBOOK.md`) |
 | Alternate layout | **Role-merged** (one `ROLE.md`, stable top + Playbook bottom) |
-| Cross-Role routing | Only in `workflow.md`; skill links to it, never creates/edits it |
+| Cross-Role routing | Only in the process document under `workflows/`; skill links to it, never creates/edits it |
 | Doc language | English in generated files; interview may be Chinese |
 | Speaking style | Ask; if human chooses default, omit the section entirely |
 | Former "Escalation" | Section title **When stuck** |
@@ -34,7 +34,7 @@ Provide a project skill `define-role` that interviews the human and either creat
 WorkFlow/
   GLOSSARY.md
   docs/define-role/spec.md
-  workflow.md                 # out of scope for define-role (link only)
+  workflows/                  # process documents; out of scope for define-role (link only)
   roles/<slug>/
     ROLE.md
     PLAYBOOK.md               # Role-Playbook only
@@ -56,7 +56,7 @@ Required:
 - slug (directory id)
 - Purpose (one sentence; why the Role exists, not a task list)
 - Boundaries (what this Role is *not* responsible for)
-- Process pointer to repo-root `workflow.md`
+- Process pointer to `workflows/`
 - If Role-Playbook: mandatory Playbook pointer requiring `./PLAYBOOK.md` before acting on mutable duties
 - If Role-merged: mandatory note in the stable top that the agent must read the `## Playbook` region below before acting on mutable duties
 
@@ -75,11 +75,11 @@ Used in `PLAYBOOK.md` or under `## Playbook` in Role-merged. Every section keeps
 | Responsibilities | Role-local duty detail |
 | Steps | Craft steps for one or more kinds of work; how *this* Role works, not who is next |
 | Checklists | Execution checklists |
-| Handoffs | When *this* Role should hand work off (normal completion path); routing detail in `workflow.md` |
-| When stuck | When to stop and raise a problem outside the Role (blocked, needs a decision, out of authority)—not normal handoff; routing in `workflow.md` |
+| Handoffs | When *this* Role should hand work off (normal completion path); routing detail in the process document under `workflows/` |
+| When stuck | When to stop and raise a problem outside the Role (blocked, needs a decision, out of authority)—not normal handoff; routing in the process document under `workflows/` |
 | Notes | Volatile conventions |
 
-Both the Role document and the Playbook (or merged Playbook region) point at `workflow.md`.
+Both the Role document and the Playbook (or merged Playbook region) point at `workflows/`.
 
 ## Interview (ordered)
 
@@ -98,7 +98,7 @@ Explain each question in 1–2 sentences before asking. Playbook sections are **
 6d. Handoffs (skip allowed)  
 6e. When stuck (skip allowed)  
 6f. Notes (skip allowed)  
-7. Write files from templates, list paths; if `workflow.md` is missing, warn only—do not create it  
+7. Write files from templates, list paths; if `workflows/` has no process document yet, warn only—do not create one  
 
 Do not write files until layout and slug are confirmed (prefer completing the interview then writing once).
 
@@ -112,7 +112,7 @@ R4. **Edit in place** — replace only the picked section bodies; a name change 
 ## Revision rules
 
 - Only the picked sections change; every other line of every file stays byte-identical
-- The card's layout, slug, and `workflow.md` / `workflows/` pointers are kept as they are
+- The card's layout, slug, and `workflows/` pointers are kept as they are
 - A different slug or a converted layout is a different card, not a revision
 - `(none yet)` is written only for a section the human clears, never for one they skip
 - Existing cards may predate the templates (the six business Roles point at `workflows/`); keeping their pointers takes precedence over template conformance
@@ -138,7 +138,7 @@ R4. **Edit in place** — replace only the picked section bodies; a name change 
 
 ## Out of scope
 
-- Creating or editing `workflow.md`
+- Creating or editing a process document under `workflows/`
 - Defining the six business roles (Team Lead, Architect/Research, Developer, Code Reviewer, QA, closer)
 - Cursor Agent / sub-agent registration
 - Renaming a Role directory, or converting Role-Playbook ↔ Role-merged
@@ -164,4 +164,4 @@ R4. **Edit in place** — replace only the picked section bodies; a name change 
 
 Creating a Role copies `templates/role-playbook/` or `templates/role-merged/` into `roles/<slug>/`, substitutes the placeholders above, and applies the speaking-style omission rule. Revising edits the files already in `roles/<slug>/` in place and uses no templates. No scaffold script.
 
-The templates still point at `workflow.md`; OI-006 tracks that mismatch with OI-001, which fixes the process pointer at `workflows/`.
+The templates point at `workflows/`, matching OI-001; this closes OI-006.

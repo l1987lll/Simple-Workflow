@@ -15,13 +15,13 @@
 ## Required reading
 
 1. Before acting on mutable duties, read the **Playbook** region below in this file.
-2. For end-to-end workflow and cross-Role routing, read [`../../workflow.md`](../../workflow.md). Do not invent handoff or escalation paths here.
+2. For end-to-end workflow and cross-Role routing, read [`../../workflows/`](../../workflows/). Do not invent handoff or escalation paths here.
 
 ---
 
 ## Playbook
 
-Mutable duties for this Role. Cross-Role routing is defined only in [`../../workflow.md`](../../workflow.md).
+Mutable duties for this Role. Cross-Role routing is defined only in [`../../workflows/`](../../workflows/).
 
 ### Responsibilities
 
@@ -37,13 +37,13 @@ Mutable duties for this Role. Cross-Role routing is defined only in [`../../work
 
 ### Handoffs
 
-When *this* Role should hand work off on a normal completion path. Who receives it and what happens next: [`../../workflow.md`](../../workflow.md).
+When *this* Role should hand work off on a normal completion path. Who receives it and what happens next: [`../../workflows/`](../../workflows/).
 
 {{HANDOFFS}}
 
 ### When stuck
 
-When to stop and raise a problem outside this Role (blocked, needs a decision, out of authority)—not a normal handoff. Who handles it next: [`../../workflow.md`](../../workflow.md).
+When to stop and raise a problem outside this Role (blocked, needs a decision, out of authority)—not a normal handoff. Who handles it next: [`../../workflows/`](../../workflows/).
 
 {{WHEN_STUCK}}
 
