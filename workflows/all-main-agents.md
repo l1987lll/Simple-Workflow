@@ -53,12 +53,12 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 1. Human talks with the team-lead bot until the ask is clear.
 2. team-lead messages `research-architect` or `developer` with a brief and artifact paths.
 3. Each Role bot does its craft and messages team-lead (and the next Role when team-lead directs) with results and artifacts.
-4. Review and QA loops use message + artifact + resume of the same Role bot as needed; team-lead stays the coordinator.
+4. Review and QA loops use message + artifact + resume of the same Role bot; team-lead stays the coordinator.
 5. On QA pass, team-lead gates done-when with the human, then messages closer.
 6. For /retro and any other human-only skill, closer tells team-lead, which reminds the human to run it—even when slash /retro is supported on these pairs, human-only skills still go through that remind path when the human must be the one to run them.
 7. Follow-ups from retro require human confirmation via team-lead (gate) before work proceeds.
 8. Parallel Role bots may run when they do not edit the same files; otherwise team-lead serializes them.
-10. `team-lead` may spawn or message multiple `developer` instances in parallel (`developer#1`, `developer#2`, …) when `STATUS.md` records disjoint path ownership for each instance; otherwise serialize.
+9. `team-lead` may spawn or message multiple `developer` instances in parallel (`developer#1`, `developer#2`, …) when `STATUS.md` records disjoint path ownership for each instance; otherwise serialize.
 
 ## Routes
 

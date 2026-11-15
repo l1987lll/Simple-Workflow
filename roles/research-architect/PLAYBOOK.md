@@ -28,6 +28,8 @@ Mutable duties for this Role. Cross-Role routing is defined only in [`../../work
 2. Prefer extending existing seams over new layers
 3. Call out risks and non-goals; stop when the design is implementable
 
+Done when every checklist item below passes.
+
 ## Checklists
 
 **Before finishing a spike / design**

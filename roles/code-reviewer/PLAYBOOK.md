@@ -24,6 +24,8 @@ Mutable duties for this Role. Cross-Role routing is defined only in [`../../work
 6. After at most four review rounds, stop reviewing and hand off per process (even if issues remain)
 7. If no changes are required, still return a clear “no blocking findings” result so the implementer can proceed
 
+Done when every checklist item below passes.
+
 ## Checklists
 
 **Each review round**
