@@ -8,7 +8,7 @@ Read before classifying support or writing the process document. Vocabulary matc
 |---|---|
 | `workflows/*.md` | Pairs, support labels, conditions (mode, human at handoff, shared repo), which Roles participate, end-to-end flow, who receives each handoff and When-stuck raise, the interaction used, how a run records STATUS and handoff artifacts, caveats |
 | Role card | When this Role hands off or is stuck; how this Role does its craft |
-| `roles/` | Role cards, created by `create-role` |
+| `roles/` | Role cards, created by `define-role` |
 
 ## Session identity
 

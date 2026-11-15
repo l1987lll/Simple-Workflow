@@ -1,4 +1,4 @@
-# create-role — Design Spec
+# define-role — Design Spec
 
 Date: 2026-11-06  
 Revised: 2026-11-15  
@@ -6,15 +6,15 @@ Status: approved
 
 ## Intent
 
-Provide a project skill `create-role` that interviews the human and either creates a Role card under `roles/<slug>/` or revises an existing one in place. Role cards are Markdown for agents to load later. This spec covers the skill only—not the six business roles and not `workflow.md` content.
+Provide a project skill `define-role` that interviews the human and either creates a Role card under `roles/<slug>/` or revises an existing one in place. Role cards are Markdown for agents to load later. This spec covers the skill only—not the six business roles and not `workflow.md` content.
 
 ## Decisions
 
 | Decision | Choice |
 |---|---|
 | Artifact | Markdown Role card (not a Cursor Agent binding) |
-| Skill location | `skills/create-role/` in this repo |
-| Skill mirror | Byte-identical copy under `.agents/skills/create-role/` so AI coding tools discover it |
+| Skill location | `skills/define-role/` in this repo |
+| Skill mirror | Byte-identical copy under `.agents/skills/define-role/` so AI coding tools discover it |
 | Packaging | Skill + template files (no scaffold script) |
 | Entries | One skill, two entries: a new Role, or a revision of an existing one |
 | Revise granularity | The human picks sections; only those sections change |
@@ -32,19 +32,19 @@ Provide a project skill `create-role` that interviews the human and either creat
 ```
 WorkFlow/
   GLOSSARY.md
-  docs/create-role/spec.md
-  workflow.md                 # out of scope for create-role (link only)
+  docs/define-role/spec.md
+  workflow.md                 # out of scope for define-role (link only)
   roles/<slug>/
     ROLE.md
     PLAYBOOK.md               # Role-Playbook only
-  skills/create-role/         # source of truth
+  skills/define-role/         # source of truth
     SKILL.md
     reference.md
     templates/
       role-playbook/ROLE.md
       role-playbook/PLAYBOOK.md
       role-merged/ROLE.md
-  .agents/skills/create-role/ # byte-identical mirror for AI coding tool discovery
+  .agents/skills/define-role/ # byte-identical mirror for AI coding tool discovery
 ```
 
 ## ROLE.md (stable)
@@ -118,7 +118,7 @@ R4. **Edit in place** — replace only the picked section bodies; a name change 
 
 ## SKILL.md behavior
 
-- `name`: `create-role`
+- `name`: `define-role`
 - `disable-model-invocation: true`
 - `description` names both entries (human-facing: create or revise)
 - Read `templates/` for a new Role only; read `reference.md` for field semantics and required pieces

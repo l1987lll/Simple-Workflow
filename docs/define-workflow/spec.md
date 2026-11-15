@@ -15,7 +15,7 @@ Provide a project skill `define-workflow` that interviews the human and creates 
 | Skill location | `skills/define-workflow/` in this repo |
 | Skill mirror | Byte-identical copy under `.agents/skills/define-workflow/` |
 | Packaging | Skill + `reference.md` + templates (no scaffold script) |
-| Prerequisite | At least one Role card under `roles/`. Otherwise stop and point at `create-role` |
+| Prerequisite | At least one Role card under `roles/`. Otherwise stop and point at `define-role` |
 | Output directory | `workflows/`. Default first file: `workflows/workflow.md`. Another name only when the human names it. Several workflows are several files. Do not merge them unless asked. Do not write a new process document at repo root |
 | Legacy files | Gate also lists repo-root `workflow.md` and `workflow-*.md` if present, and may move a revised file into `workflows/` on write |
 | Doc language | English in the process document. Interview in the human's language (often Chinese). A few ask-lines are fixed Chinese |
