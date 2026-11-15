@@ -19,7 +19,7 @@
 - Field order in every team YAML: `id`, `workflow`, `team_lead_id`, `harness`.
 - `workflow` values are paths relative to `.workflow/workflows/`.
 - If platform team-lead id is unavailable, generate a GUID and require the lead agent to remember the same id.
-- Sync skill trees: `skills/setup-workflow/` is source of truth; copy to `.agents/skills/setup-workflow/` and `C:\Users\Transfinder\.agents\skills\setup-workflow\` after skill edits.
+- Sync skill trees: `skills/setup-workflow/` is source of truth; copy to `.agents/skills/setup-workflow/` and the machine-global `~/.agents/skills/setup-workflow/` after skill edits.
 - Prefer small surgical edits; do not remove Gitignore-if-exists, Standards auto-wire, cwd-first Target, or add-group intent.
 - Work on branch `feature/setup-workflow` (or current feature branch); do not commit to `develop`/`master`; commit only when the human asks or at task commit steps if they approved commits for this plan.
 
@@ -35,7 +35,7 @@
 | `skills/setup-workflow/SKILL.md` | Hard rules, steps, human actions, Check, Report, completion criteria |
 | `skills/setup-workflow/reference.md` | Detection, existing-install, naming/add-group, Check list, schema |
 | `.agents/skills/setup-workflow/*` | Identical mirror of skills/setup-workflow |
-| `C:\Users\Transfinder\.agents\skills\setup-workflow\*` | Local global mirror |
+| `~/.agents/skills/setup-workflow/*` | Local global mirror |
 | Consumer `.workflow/` (optional) | Ensure Team configs exist if human asks in-session |
 
 ---
@@ -220,8 +220,8 @@ git commit -m "feat(setup-workflow): write Team configs"
 
 **Files:**
 - Sync: `.agents/skills/setup-workflow/` from `skills/setup-workflow/`
-- Sync: `C:\Users\Transfinder\.agents\skills\setup-workflow\`
-- Optional consumer: `D:\DevelopmentGit\.workflow\` (only if human asks)
+- Sync: `~/.agents/skills/setup-workflow/` (machine-global skills directory)
+- Optional consumer: `<consumer-root>/.workflow/` (only if human asks)
 
 **Interfaces:**
 - Consumes: final SKILL.md + reference.md
@@ -230,10 +230,11 @@ git commit -m "feat(setup-workflow): write Team configs"
 - [ ] **Step 1: Copy mirrors**
 
 ```powershell
-$src = 'D:\DevelopmentGit\Simple-Workflow\skills\setup-workflow'
+$kitRoot = '<path to the kit checkout>'
+$src = "$kitRoot\skills\setup-workflow"
 $mirrors = @(
-  'D:\DevelopmentGit\Simple-Workflow\.agents\skills\setup-workflow',
-  'C:\Users\Transfinder\.agents\skills\setup-workflow'
+  "$kitRoot\.agents\skills\setup-workflow",
+  "$env:USERPROFILE\.agents\skills\setup-workflow"
 )
 foreach ($dst in $mirrors) {
   New-Item -ItemType Directory -Force -Path $dst | Out-Null
@@ -247,7 +248,7 @@ Expected: three identical hashes for SKILL.md; three identical for reference.md.
 
 - [ ] **Step 2: Optional consumer verify**
 
-If the human asks about `D:\DevelopmentGit\.workflow` now: ensure a Team config yaml exists for each Team. Use platform id or generate GUID per design when creating a missing Team config.
+If the human asks about `<consumer-root>/.workflow/` now: ensure a Team config yaml exists for each Team. Use platform id or generate GUID per design when creating a missing Team config.
 
 - [ ] **Step 3: Commit skill sync (if human asked)**
 
