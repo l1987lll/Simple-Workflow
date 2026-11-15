@@ -17,14 +17,14 @@ Do not describe layouts to the human as only "one document / two documents" with
 |---|---|---|
 | `ROLE.md` stable | name, slug, purpose, optional speaking style, boundaries, required-reading pointers | Pipeline steps, who talks to whom |
 | Playbook | Responsibilities, craft Steps, Checklists, when *this* Role hands off or is stuck, Notes | How the other Role works; full routing |
-| `workflow.md` | End-to-end flow; cross-Role assignment and routing | (owned outside this skill) |
+| `workflows/*.md` | End-to-end flow; cross-Role assignment and routing | (owned outside this skill) |
 
 ## Handoffs vs When stuck
 
 - **Handoffs** — normal “I'm done with my part; work should leave this Role.”
 - **When stuck** — abnormal stop: blocked, contradictory requirements, needs a decision, out of authority. Not the happy-path handoff.
 
-Both sections may say *when*; neither defines *who next*—that is `workflow.md`.
+Both sections may say *when*; neither defines *who next*—that is the process document under `workflows/`.
 
 ## Required pieces (existing card)
 
@@ -36,7 +36,7 @@ Both sections may say *when*; neither defines *who next*—that is `workflow.md`
 
 A missing piece is offered as a section to fill during the revision; the card's own pointers, heading order, and hand-written prose stay as they are.
 
-Existing cards may predate the current templates: the six business Roles point at `../../workflows/`, not the templates' `../../workflow.md`. Keep the card's pointer text—restoring template wording would break it.
+Existing cards point at `../../workflows/`, as the templates now do. Keep that pointer text—restoring older template wording would break it.
 
 ## Placeholders
 
