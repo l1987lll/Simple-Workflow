@@ -119,7 +119,7 @@ foreach ($skillDir in Get-ChildItem -Path (Join-Path $root 'skills') -Directory)
 
 if ((Test-Path $attributes) -and ((Get-Content $attributes -Raw) -match 'eol=lf')) {
     $eol = & git -C $root ls-files --eol
-    $badEol = $eol | Where-Object { $_ -match '^(i/crlf|w/crlf|w/mixed)' }
+    $badEol = $eol | Where-Object { $_ -match '(^|\s)(i/crlf|w/crlf|w/mixed)(\s|$)' }
     foreach ($line in $badEol) {
         $errors.Add("line endings: $line")
     }
