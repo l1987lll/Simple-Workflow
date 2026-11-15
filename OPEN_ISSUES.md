@@ -4,13 +4,9 @@ Tracked work that is not done in Role cards or process documents yet.
 
 ## OI-001 — How an agent picks which process document to load
 
-**Status:** open  
+**Status:** done  
 **Raised:** 2026-11-08  
-**Context:** More than one process document exists under `workflows/` (`main-with-subagents.md` for Cursor/DSH, `all-main-agents.md` for Grok Bot). Role cards currently point at the `workflows/` directory, not a single file.
-
-**Interim:** Keep Role/Playbook links to [`workflows/`](workflows/). Do not use the phrasing "active process document for this run" in Role cards. Agents must read their bound Team config under `.workflow/teams/`, then that process document; if either is missing, stop.
-
-**Planned fix:** [`setup-workflow`](skills/setup-workflow/SKILL.md) (formerly referred to as install-workflow) writes `.workflow/teams/<id>.yaml` in a consumer project (one file per Team). Each file records `id`, `workflow` (a path relative to `.workflow/workflows/`), `team_lead_id`, and `harness`. Team config is the only current-workflow pointer. Role cards keep pointing at the `workflows/` directory.
+**Done:** [`setup-workflow`](skills/setup-workflow/SKILL.md) writes `.workflow/teams/<id>.yaml` per Team with `id`, `workflow`, `team_lead_id`, and `harness`; the Team config is the only current-workflow pointer, and every agent reads it before the document. Role cards keep pointing at [`workflows/`](workflows/). Schema and runtime rule: [`setup-workflow` reference](skills/setup-workflow/reference.md#team-config-format).
 
 
 

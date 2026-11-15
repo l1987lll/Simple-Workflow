@@ -103,7 +103,7 @@ This step's name is Find kit.
 
 If this run's intent is add-group or check-only, skip this step (the consumer install is already present).
 
-Detect the kit source in the order in [reference.md](reference.md#kit-detection-order) and stop at the first valid source. The skill's own folder is never a kit source: roles and process documents are not inside it.
+Detect the kit source in the order in [reference.md](reference.md#kit-detection-order) and stop at the first valid source. This skill's own folder is not one: [reference.md](reference.md#valid-kit-source).
 
 Done when a valid kit source is identified and the human has not objected to it, or this step was skipped because the intent is add-group or check-only.
 
