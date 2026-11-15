@@ -192,6 +192,19 @@ if ((Test-Path $attributes) -and ((Get-Content $attributes -Raw) -match 'eol=lf'
     }
 }
 
+# The PR template keeps its three sections in the order the pr skill expects.
+$prTemplatePath = Join-Path $root '.github/pull_request_template.md'
+if (Test-Path $prTemplatePath) {
+    $expectedSections = @('Summary', 'Evidence', 'Merge Danger')
+    $actualSections = @()
+    foreach ($line in [System.IO.File]::ReadAllLines($prTemplatePath)) {
+        if ($line -match '^##\s+(.+?)\s*$') { $actualSections += $Matches[1] }
+    }
+    if (($actualSections -join '|') -ne ($expectedSections -join '|')) {
+        $errors.Add("PR template sections: expected [$($expectedSections -join ', ')], found [$($actualSections -join ', ')]")
+    }
+}
+
 if ($errors.Count -gt 0) {
     $errors | ForEach-Object { Write-Output "ERROR $_" }
     Write-Output "$($errors.Count) problem(s) found"
