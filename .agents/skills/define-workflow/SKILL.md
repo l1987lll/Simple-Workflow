@@ -1,6 +1,6 @@
 ---
 name: define-workflow
-description: Create or revise a process document under workflows/ when the human wants a new way of working defined — interview for harness, environment, and per-pair support, then offer the workflows the existing Roles can run and write the one they accept.
+description: Create or revise a process document under workflows/ when the human wants a new way of working defined — interview for harness, environment, per-pair support, and the participating Roles, then offer the workflows those Roles can run and write the one the human accepts.
 ---
 
 # define-workflow
@@ -17,6 +17,7 @@ This skill file is English only. Generated process Markdown is English. Explain 
 - At Gate, list existing process documents as well as Roles. If any exist and the human has not said create versus revise which file, ask before continuing.
 - Write the process document as a doc an agent reads: follow `docs/agent-docs.md`—one action per numbered step, reference below the steps, every pointer naming a path that exists
 - Leave Role cards unchanged.
+- Settle the participating Roles before offering shapes: on a create, choose from the cards under `roles/`; on a revise, keep, add, or remove. The Roles section, the route tables, and the Flow stay in step: every listed Role has one handoff table and one when-stuck table, and every route target is a listed Role.
 - A slash command or skill that only the human can run is not invoked by a Role agent. Route it through the coordinating main Role (usually `team-lead`): that Role reminds the human to run it (gate + relay). Record that routing in the process document. Prefer this remind path over keeping an unsupported or uncertain agent-invoked slash as a caveat.
 - After the workflow is accepted, run step Run state and artifacts before the check. The process document must say how a run records STATUS, who may write it, how each in-flight Role instance is listed, where handoff artifacts live, and how parallel instances get disjoint path ownership.
 - A label belongs to the pair it was classified for.
@@ -61,6 +62,7 @@ Say the step name, then explain it in 1–2 sentences, then ask. Use the English
 | Gate | Confirm roles |
 | 1 | Harness and environment |
 | 2 | Support |
+| 3 | Roles |
 | 4 | Choose workflow |
 | 5 | Run state and artifacts |
 | 6 | Check |
@@ -111,26 +113,46 @@ On a revise, keep each label already in the file until the human changes that pa
 
 Done when every pair has a label for every interaction, a `subagent-depth` value, a peers label, a `main-peers` label, and every named slash command, the standing sentence was told to the human, and every unsupported or uncertain label was told to the human in plain words. When other pairs exist, the support prompt was shown once with no harness or environment filled in, and each of them was named only after the previous result was in hand.
 
-### 3. Create or revise
+### 3. Roles
 
-Do not announce a separate step name. This opens Choose workflow.
+This step's name is Roles.
 
-Use the Gate decision: which path this run writes, and whether it creates or revises.
+Read every `roles/*/ROLE.md`, and its `PLAYBOOK.md` when the card has one. A workflow runs only the Roles the human picks; an unpicked Role gets no Roles line and no route tables.
 
-When this run **revises** a named process document, read that file. Restate any caveat already in it. Ask what changes: pairs, support, the workflow shape, or run state and artifacts. Re-classify only pairs or interactions the human adds or disputes. When the human keeps the existing workflow shape, skip the menu in step 4. Step 5 (Run state and artifacts) still runs if that section changes or is missing; otherwise keep the stored run-state section. **Step 6 (Check) always runs on revise**, even when the human changed only one part and kept the rest. Keep the chosen path unless the human renames it.
+On a **create**, show every card's slug and one-line purpose and ask which take part. More than one answer is allowed. One Role is allowed when the human says so.
 
-When this run **creates** a process document, continue to step 4. Default path is `workflows/workflow.md` unless the human named another file under `workflows/` (including a second file beside an existing one).
+On a **revise**, read the Roles section of the chosen file and show the Roles already in it, the cards that are not in it, and both route tables each current Role has. Ask what changes: keep, add, or remove. Name every Role the human adds or removes.
 
-Done when the create-versus-revise choice and target path are fixed, and either the human said which parts change on a revise, or the run is ready to offer workflows on a create.
+Apply the answer before the shape offer:
+
+- A kept Role keeps its Roles line, its Flow mentions, and both route tables.
+- An added Role gets a Roles line, one handoff table, and one when-stuck table built from its card's Handoffs and When stuck bullets.
+- A removed Role loses its Roles line, both route tables, and every Flow mention. A route that pointed at it is re-pointed to a Role still listed, or the removal is dropped.
+- The Flow is renumbered and reworded to match the final Role set.
+
+On a **create**, the confirmation settles the Role set; the Flow arrives with the accepted shape in Choose workflow.
+
+On a **revise**, show the adjusted Flow and every added or removed route. Ask with these words:
+
+These are the Roles in the workflow and the flow they produce. Accept it, or name what to change.
+
+Done when the participating Role set is fixed, every chosen Role's card was read, and on a revise the adjusted Flow and every added or removed route were shown and confirmed.
+
 ### 4. Workflows
 
 This step's name is Choose workflow.
 
-Read each Role card's purpose, boundaries, Handoffs, When stuck, and Steps, and the support labels for the chosen pairs. Role-Playbook cards keep those sections in `PLAYBOOK.md`. Role-merged cards keep them in the Playbook region of `ROLE.md`. A workflow is the Role order, who receives each handoff or When-stuck raise, and the interaction that carries it. Role cards state when work leaves; the workflow states who is next. Offer shape: [reference.md](reference.md).
+Open with the Gate decision: which path this run writes, and whether it creates or revises.
+
+When this run **revises** a named process document, read that file. Restate any caveat already in it. Ask what changes beyond Roles: pairs, support, the workflow shape, or run state and artifacts. Re-classify only pairs or interactions the human adds or disputes. When the human keeps the existing workflow shape, skip the menu below. Step 5 (Run state and artifacts) still runs if that section changes or is missing; otherwise keep the stored run-state section. **Step 6 (Check) always runs on revise**, even when the human changed only one part and kept the rest. Keep the chosen path unless the human renames it.
+
+When this run **creates** a process document, build the offer from the Roles chosen in step 3. Default path is `workflows/workflow.md` unless the human named another file under `workflows/` (including a second file beside an existing one).
+
+The cards for the chosen Roles were read in step 3; use their purpose, boundaries, Handoffs, When stuck, and Steps, and the support labels for the chosen pairs. Role-Playbook cards keep those sections in `PLAYBOOK.md`. Role-merged cards keep them in the Playbook region of `ROLE.md`. A workflow is the Role order, who receives each handoff or When-stuck raise, and the interaction that carries it. Role cards state when work leaves; the workflow states who is next. Offer shape: [reference.md](reference.md).
 
 The interaction names are defined by this skill. They are not words every agent already has. Say that in the human's language. In the offer, write each interaction as its name from the table above plus its meaning, in the human's language. Also list, in those same words, every interaction that all chosen pairs marked supported, so the human need not remember the Support step.
 
-In the offer, the columns are When, then Interaction, then Next, then what is handed. For every participating Role, include every Handoff bullet and every When stuck bullet. Include branches, return loops, and any stop limit that changes who is next. A one-line sketch is not an option.
+In the offer, the columns are When, then Interaction, then Next, then what is handed. For every Role chosen in step 3, include every Handoff bullet and every When stuck bullet. Include branches, return loops, and any stop limit that changes who is next. A one-line sketch is not an option.
 
 In each option, every Role instance is either a main agent or a sub-agent. Say which before that Role's rows. A sub-agent cannot communicate with the human. It returns work to the main session that created it. The human talks only with a main agent. Two main agents communicate directly only when `main-peers` is supported on every pair; otherwise the human carries the brief with relay. Which Roles are main agents is part of what makes two options different. Fewer main agents is less human participation.
 
@@ -192,7 +214,7 @@ Always run this step after create and after revise. Do not skip Check because on
 
 Before writing, walk the accepted workflow once. A check passes when the workflow matches what the human has said for every pair. When it conflicts or is still unknown, discuss it: name the pair, the route, and the problem, then ask the human to drop that part, switch it, keep it as a caveat, or add a sentence that states the constraint.
 
-1. **Catalog.** Every slug exists under `roles/`. Every interaction is in the catalog. An unsupported or uncertain use is a caveat the human kept this run.
+1. **Catalog.** Every slug in the Roles section exists under `roles/`. Every route target is a Role listed in the Roles section. Every listed Role has one handoff table and one when-stuck table. Every interaction is in the catalog. An unsupported or uncertain use is a caveat the human kept this run.
 2. **Mode.** Each pair records whether this run may edit the repo and whether it waits for approval. A route that writes or spawns needs a mode that may edit. A route that continues with no person waiting needs a mode that does not wait.
 3. **Attendant.** A human is available when each relay or gate happens on that pair.
 4. **Shared repo.** On each artifact route, the next Role can read the files this Role wrote.
@@ -205,7 +227,7 @@ Done when every check passes, or each failure was discussed and the human chose.
 
 ### 7. Write and report
 
-Fill [templates/workflow.md](templates/workflow.md) with the pairs, labels, conditions, roles used, flow, routes, run state and artifacts, and caveats. One slash row per command; omit it when the workflow calls no command. One handoff table and one when-stuck table per slug. Conditions record, per pair, the mode, whether a human is available at handoffs, and whether Roles share one repo. Caveat lines match the fragment in [reference.md](reference.md). The Caveats section is `(none)` when nothing was kept. Read the written file back; fix a broken list item or a stray line before reporting the path.
+Fill [templates/workflow.md](templates/workflow.md) with the pairs, labels, conditions, roles used, flow, routes, run state and artifacts, and caveats. One slash row per command; omit it when the workflow calls no command. Write only the Roles chosen in step 3: one handoff table and one when-stuck table per chosen slug, and no table for a removed Role. Conditions record, per pair, the mode, whether a human is available at handoffs, and whether Roles share one repo. Caveat lines match the fragment in [reference.md](reference.md). The Caveats section is `(none)` when nothing was kept. Read the written file back; fix a broken list item or a stray line before reporting the path.
 
 Done when the file under `workflows/` matches the accepted workflow after the check, caveats and conditions are visible, the path was reported, and Role cards are unchanged.
 
@@ -213,6 +235,9 @@ Done when the file under `workflows/` matches the accepted workflow after the ch
 
 - [ ] At least one Role card existed; slugs listed
 - [ ] Existing process documents listed (or none); create versus revise chosen when more than none existed and the invoke was unclear
+- [ ] Participating Roles settled: chosen on a create, kept, added, or removed on a revise
+- [ ] On a revise, the adjusted Flow and every added or removed route were confirmed with the human
+- [ ] Every listed Role has one handoff and one when-stuck table; every route target is a listed Role
 - [ ] At least one harness + environment pair named
 - [ ] Every interaction labeled per pair; `subagent-depth`, peers, and `main-peers` recorded; slash labeled per command
 - [ ] The standing sentence that a sub-agent cannot communicate with the human was told to the human
