@@ -23,7 +23,7 @@ A simple AI Agent workflow with customizable roles and process documents.
 
 | Skill | What it does |
 |---|---|
-| [`create-role`](skills/create-role/SKILL.md) | Interviews you, then scaffolds a Role card under `roles/<slug>/` (Role-Playbook default, or Role-merged) |
+| [`create-role`](skills/create-role/SKILL.md) | Interviews you, then scaffolds a Role card under `roles/<slug>/` (Role-Playbook default, or Role-merged), or revises an existing card section by section |
 | [`define-workflow`](skills/define-workflow/SKILL.md) | Interviews you for harness, environment, support, workflow shape, and run state, then creates or revises a process document under `workflows/` |
 | [`setup-workflow`](skills/setup-workflow/SKILL.md) | Sets up the kit in a consumer project's `.workflow/` directory (roles, process documents, run templates, project-standards templates, and Team config files) |
 
