@@ -1,6 +1,6 @@
 # setup-workflow reference
 
-Read when detecting the kit source, planning a re-setup or adding a Role-bot group, listing human actions, or walking the Check. Vocabulary matches repo-root `GLOSSARY.md`.
+Read when detecting the kit source, planning a re-setup or adding a Role-bot group, writing a Team config, running the all-main-agents Role-bot flow, listing human actions, or walking the Check. Vocabulary matches repo-root `GLOSSARY.md`.
 
 ## Consumer layout
 
@@ -87,7 +87,7 @@ Before asking, report:
 - whether Playbooks already require `.workflow/project-standards/` paths
 - Any already-visible Role bots or Role-bot group prefixes for this install, when that is knowable
 
-Then ask **intent first** (human action). Never assume; never silently overwrite trees. **Add Role-bot group** must not replace trees or overwrite other Teams' yaml files.
+Then ask **intent first** (human action). Never assume; never silently overwrite trees. Do not replace a tree or rewrite a Team yaml before the human answers the intent and its questions. Live `.workflow/runs/<run-id>/` folders are not part of a template sync; leave them unless the human explicitly asks to remove them. **Add Role-bot group** must not replace trees or overwrite other Teams' yaml files.
 
 1. **Update install** — classic re-setup: full or selective tree replace and/or change a named Team's `workflow` or metadata.
 2. **Add Role-bot group** — keep the existing `.workflow/` trees and other Team yamls unchanged; create another Team (a new `teams/<id>.yaml`). On an all-main-agents session that can create Role bots (for example Grok), also create another Role-bot group. On a one-main-with-sub-agents session (for example Cursor), still create the new Team yaml and bind this chat as lead; do not pre-create Role bots.
@@ -108,7 +108,7 @@ If intent is **Check only**: record trees to copy = none; do not rewrite Team ya
 
 ## Human actions (report list)
 
-Use with Human actions in `SKILL.md`. This table is a lookup, not a script to read aloud. In Report, include a row only if it **applied this run**. Mark those rows done, declined, or pending. Do not claim the run is complete while any included row is pending. Do not list rows that never applied. Do not list the other harness except as Initialize/Report follow-up.
+Use with Human actions in `SKILL.md`. This table is a lookup, not a script to read aloud: do not preview later steps, and include a row only if it **applied this run**. Mark those rows done, declined, or pending. Do not claim the run is complete while any included row is pending. Do not list rows that never applied. Do not list the other harness except as Initialize/Report follow-up.
 
 | Action | Remind at | Only when |
 |---|---|---|
@@ -178,6 +178,7 @@ Do not create bots and do not rewrite this session bot until they confirm. They 
 - Apply any shared standing instructions to each bot in the plan (including this session bot when initialized). Role-specific craft still comes from the Role card; shared instructions do not replace the card.
 - Do not ask the human to paste each card.
 - Remind them to authorize a bot only when the platform still requires a person after create.
+- Do not start those bots on product work during setup.
 - On update-install: do not rename existing bots or rewrite their standing instructions unless the human asks or the confirmed plan says so; for new Roles only, reuse the last confirmed naming rule when available or re-infer, re-ask (or reuse) shared standing instructions, confirm the create/init plan, then create. A full extra group uses the Add Role-bot group path, not this new-Roles-only rule.
 
 ### Add Role-bot group
@@ -197,7 +198,7 @@ Read the new Team config written this run (or this session's bound Team config) 
    - **New Role bots:** each Role in the new group with confirmed names and installed Role cards.
    - **Sidebar section:** if the platform can list sidebar sections (`ListSections`), ask which existing section to place the new bots in, or leave them unassigned. Prefer proposing an existing matching section (for example a section named Team 2 when the prefix is `T2`). There is no CreateSection tool; only `CreateAgent` with a `section_id` returned by ListSections.
    - Shared standing instructions as confirmed.
-6. Create only after the plan is confirmed. Do not rename or rewrite existing bots unless the plan says so. Apply shared standing instructions to the new group's bots. Remind the human to authorize a bot only when the platform still requires a person after create.
+6. Create only after the plan is confirmed. Do not rename or rewrite existing bots unless the plan says so. Apply shared standing instructions to the new group's bots. Remind the human to authorize a bot only when the platform still requires a person after create. Do not start those bots on product work during setup.
 7. An Update-install re-setup that also creates new Roles still follows the "new Roles only" rule in Create above. Add-group is the dedicated path for a full extra group.
 
 ## Detect this session's bound Team config
@@ -278,7 +279,9 @@ Start at `team-lead` intake and follow every Flow step and every Routes table ro
 6. **Artifacts and run template.** `.workflow/runs/_template/STATUS.md` and `.workflow/runs/_template/brief.md` exist. Relative links from the process document to `../runs/_template/` resolve to that folder. The document states the STATUS path, the single writer (`team-lead`), per-instance rows, artifact layout, and disjoint path ownership when `parallel` is used. A live run folder is created under `.workflow/runs/<run-id>/`.
 7. **Coding / commit / review standards.** `.workflow/project-standards/` has the three template files (when that tree was installed or replaced this run, or already present and Playbooks already require them), each readable, and the matching Playbooks require those paths.
 8. **Static pointers.** Role cards still link to the `workflows/` directory, not to a Team config file.
-9. **Consumer hygiene.** If `.gitignore` already exists, it contains `.workflow/` (append if missing; do not create `.gitignore`). `.workflow/` does not contain copied kit `skills/`, `docs/`, or root README. When `project-standards/` was installed this run or kept from an earlier install, `.workflow/project-standards/` holds the three template filenames.
+9. **Consumer hygiene.** `.gitignore` (when the consumer has one) lists `.workflow/`. `.workflow/` does not contain copied kit `skills/`, `docs/`, or root README. When `project-standards/` was installed this run or kept from an earlier install, `.workflow/project-standards/` holds the three template filenames.
 10. **Re-setup.** Check always runs after a sync, add-group, or check-only, even when the human kept Team configs or no trees were copied. On update-install, only trees the human accepted were replaced and other Teams' yamls were not silently overwritten. On add-group, no trees were replaced, other Team yamls were kept, and a new Team yaml was created if this run was supposed to create one. On check-only, no trees were replaced and Team yamls were not rewritten. Live `runs/<run-id>/` folders remain unless the human asked to remove them.
 
 A check that only verifies "the path string exists" without walking hops is incomplete.
+
+On success, report what was checked: Roles, Team configs, process hops, `runs/_template/`, and the project-standards paths.
