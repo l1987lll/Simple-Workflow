@@ -15,8 +15,7 @@ Slash commands or skills that only a human can run are not invoked by a Role age
 
 ## Support
 
-Each cell is supported, unsupported, or uncertain, except subagent-depth, which is 
-one, a number of further levels a sub-agent can create, or uncertain. Slash rows name the command.
+Each cell is supported, unsupported, or uncertain, except subagent-depth, which is one, a number of further levels a sub-agent can create, or uncertain. Slash rows name the command.
 
 | Interaction | Cursor / Local IDE chat | DSH / Local IDE chat |
 |---|---|---|
@@ -43,8 +42,7 @@ one, a number of further levels a sub-agent can create, or uncertain. Slash rows
 ## Roles
 
 - `team-lead` — main agent; intake with the human, assign and coordinate, unblock until done
-- 
-research-architect — sub-agent; opened only when research or architecture is needed
+- `research-architect` — sub-agent; opened only when research or architecture is needed
 - `developer` — sub-agent; implements the agreed change
 - `code-reviewer` — sub-agent; reviews the branch/PR
 - `qa` — sub-agent; verifies the change
@@ -53,10 +51,8 @@ research-architect — sub-agent; opened only when research or architecture is n
 ## Flow
 
 1. Human talks with team-lead until the ask is clear.
-2. If research or architecture is required, team-lead spawns 
-research-architect; otherwise spawns developer.
-3. 
-research-architect returns a plan to team-lead; team-lead then spawns developer with that plan.
+2. If research or architecture is required, team-lead spawns `research-architect`; otherwise spawns `developer`.
+3. `research-architect` returns a plan to team-lead; team-lead then spawns `developer` with that plan.
 4. developer returns a reviewable branch/PR; team-lead spawns or resumes code-reviewer.
 5. Review loops (at most four rounds): findings go to team-lead, which resumes developer, then resumes code-reviewer for the next pass.
 6. When review is clear or the round limit is hit, team-lead spawns qa.

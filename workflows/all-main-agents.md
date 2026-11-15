@@ -15,8 +15,7 @@ Slash commands or skills that only a human can run are not invoked by a Role bot
 
 ## Support
 
-Each cell is supported, unsupported, or uncertain, except subagent-depth, which is 
-one, a number of further levels a sub-agent can create, or uncertain. Slash rows name the command.
+Each cell is supported, unsupported, or uncertain, except subagent-depth, which is one, a number of further levels a sub-agent can create, or uncertain. Slash rows name the command.
 
 | Interaction | Grok Bot / Local IDE chat | Grok Bot / Cloud agent |
 |---|---|---|
@@ -43,8 +42,7 @@ one, a number of further levels a sub-agent can create, or uncertain. Slash rows
 ## Roles
 
 - `team-lead` — main bot; intake with the human, assign and coordinate other Role bots, unblock until done
-- 
-research-architect — main bot; used only when research or architecture is needed
+- `research-architect` — main bot; used only when research or architecture is needed
 - `developer` — main bot; implements the agreed change
 - `code-reviewer` — main bot; reviews the branch/PR
 - `qa` — main bot; verifies the change
@@ -53,8 +51,7 @@ research-architect — main bot; used only when research or architecture is need
 ## Flow
 
 1. Human talks with the team-lead bot until the ask is clear.
-2. team-lead messages 
-research-architect or developer with a brief and artifact paths.
+2. team-lead messages `research-architect` or `developer` with a brief and artifact paths.
 3. Each Role bot does its craft and messages team-lead (and the next Role when team-lead directs) with results and artifacts.
 4. Review and QA loops use message + artifact + resume of the same Role bot as needed; team-lead stays the coordinator.
 5. On QA pass, team-lead gates done-when with the human, then messages closer.
