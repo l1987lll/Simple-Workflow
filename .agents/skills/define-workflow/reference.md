@@ -84,16 +84,6 @@ Route warned: `lead` → `scout` by spawn. Claude Code / local CLI is uncertain.
 
 `lead → scout by spawn — uncertain on Claude Code / local CLI; kept by human.`
 
-## Run state (default offer)
-
-Offer this after the workflow is accepted. The human may rename paths.
-
-- Run id folder: `runs/<run-id>/`
-- STATUS file: `runs/<run-id>/STATUS.md`, written only by the coordinating main Role (usually `team-lead`)
-- Per in-flight instance row: Role slug, instance id, agent id, slice, path ownership, phase, artifacts, waiting on
-- Handoff artifacts under the same run folder; product code on the run's work branch
-- Parallel instances require disjoint path ownership recorded before edits
-
 ## Process document discovery
 
 At Gate, list `workflows/*.md`, plus any legacy repo-root `workflow.md` / `workflow-*.md`. Summarize each from its opening shape lines. New creates go under `workflows/`. If the human's invoke did not already choose create versus revise a named file, ask before the harness interview.
