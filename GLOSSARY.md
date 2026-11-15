@@ -33,7 +33,7 @@ Optional Role card shape: one `ROLE.md` with a stable upper section and a mutabl
 _Avoid_: Role-only, single-document layout, monolith
 
 **Process document** (`workflows/*.md`):
-End-to-end workflow and how Roles interact, including each pair's support for the interactions it uses. Lives under `workflows/`, outside Role cards. `define-workflow` creates and edits these files. `define-role` does not. Informal shorthand may still say workflow.md.
+End-to-end workflow and how Roles interact, including each pair's support for the interactions it uses. Lives under `workflows/`, outside Role cards. `define-workflow` creates and edits these files. `define-role` does not.
 _Avoid_: playbook, pipeline doc
 
 **Harness**:
@@ -69,11 +69,11 @@ The next Role can read the files this Role wrote.
 _Avoid_: workspace, checkout
 
 **Route**:
-Who receives a Role's handoff or When-stuck raise, and which interaction carries it. Written in `workflow.md`.
+Who receives a Role's handoff or When-stuck raise, and which interaction carries it. Written in the process document under `workflows/`.
 _Avoid_: handoff (that is the Playbook section), transition, edge
 
 **Caveat**:
-A route kept in `workflow.md` after the human was warned that an interaction is unsupported or uncertain on a named pair.
+A route kept in the process document under `workflows/` after the human was warned that an interaction is unsupported or uncertain on a named pair.
 _Avoid_: exception, waiver
 
 **Run**:
@@ -87,6 +87,10 @@ _Avoid_: chat log, memory, scratch notes
 **Role instance**:
 One agent playing a Role in a run (for example `developer#2`). A Role may have more than one instance in the same run when path ownership is disjoint.
 _Avoid_: clone, copy, duplicate Role
+
+**Sub-agent**:
+An agent a main session starts on a Role card. It returns its result to the session that created it and cannot communicate with the human. Field names keep the `subagent-` spelling (`subagent-depth`, `subagent-peers`).
+_Avoid_: child agent, worker, helper
 
 **Role-bot group**:
 One set of Role bots for the same consumer `.workflow/` install, distinguished by a naming prefix (for example `T1` or `T2`). A Role-bot group is one kind of Team, typically on an all-main-agents harness. Groups share the same Role cards, process documents, and standards; each group has its own bots, its own Team config, and may use its own sidebar section.
