@@ -6,7 +6,7 @@ Shape: four main agents talk to the human—`manager`, `team-lead`, `assistant`,
 
 Levels: the human is level 1. `manager`, `assistant`, and `workflow-owner` are level 2 and do not manage each other. `team-lead` is level 3 and manages its own group. Expert groups are planned and have no Role cards yet; when their cards land they sit under `manager`, and a member attached to a team answers to that `team-lead`, while a member working alone tracks their own PR.
 
-Only `workflow-owner` writes the definition files under `.workflow/`—process documents, Role cards, run templates, Team configs, and project standards. A live run's `runs/<run-id>/` artifacts are written by `team-lead`, not by `workflow-owner`, and are not definition changes.
+Only `workflow-owner` writes the definition files under `.workflow/`—process documents, Role cards, run templates, Team configs, and project standards. Everyone reads and writes the live run folder `runs/<run-id>/`: members write their own handoff artifacts there and `team-lead` alone writes `STATUS.md`. Run artifacts are not definition changes.
 
 ## Targets
 
@@ -59,7 +59,7 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 1. The human talks with `team-lead` about the task. Rarely `manager` takes the task from the human and passes it on: `manager` → `team-lead` is relay, so the human carries the brief.
 2. `team-lead` assigns work inside its group by spawning or messaging members. A member returns its result to `team-lead` and never talks to another member.
 3. When research or architecture is needed, `team-lead` spawns `research-architect`. The plan returns to `team-lead`, which then assigns `developer` with it.
-4. When a real interface design or interaction change is needed, `team-lead` spawns `ui-ux-designer`. A small interface change goes straight to `developer`. The design and the prototype question return to `team-lead`, which approves the design and then takes it to the human (gate). After the human agrees, `team-lead` hands the design to `developer`.
+4. When a real interface design or interaction change is needed, `team-lead` spawns `ui-ux-designer`. A small interface change goes straight to `developer`. The design and the prototype question return to `team-lead`, which approves the design and then takes it to the human (gate). After the human agrees, `team-lead`—not the human—hands the design to `developer`.
 5. Implementation returns to `team-lead`, which spawns or resumes `code-reviewer`. Review loops stay at four rounds.
 6. The author reports every PR to `team-lead`. `team-lead` tracks the PR until it is merged.
 7. A review comment that is right, good, and low-impact is fixed by the author without asking. A comment that is high-impact, risky, or uncertain goes to the human through `team-lead` (gate) before anyone changes it.
@@ -68,7 +68,7 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 10. When the task is done, `team-lead` asks the human to confirm clean-up (gate). Then `closer` clears worktrees, temporary files, and temporary resources, and checks for omissions, unfinished work, and Issue Tracker status.
 11. `team-lead` confirms those checks. `closer` proposes a `/retro` round to `team-lead`, which asks the human whether members run `/retro` (gate). Members run it where `slash /retro` is supported on their pair; elsewhere the human runs it.
 12. Finally `team-lead` sets the task status to Done in `STATUS.md`.
-13. A `.workflow/` change goes only to `workflow-owner`: a member sends it to `team-lead`, which passes it to the human, who carries it to `manager`; the human may also open `workflow-owner` directly. `assistant` sends such a request through the human too. `workflow-owner` confirms with the human (gate) before writing, then commits the change in the `.workflow/` repository.
+13. A `.workflow/` change goes only to `workflow-owner`, with no approval chain. Any Role may send it: a member sends it to `team-lead`, the only channel a sub-agent has; `team-lead`, `assistant`, and `manager` carry it to `workflow-owner` through the human, because two main agents cannot message each other here. The human may open `workflow-owner` directly. `workflow-owner` confirms with the human (gate) before writing, then commits the change in the `.workflow/` repository.
 14. Parallel members are allowed when `team-lead` starts independent slices that do not edit the same files.
 15. `team-lead` may run several `developer` instances in parallel (`developer#1`, `developer#2`, …) when `STATUS.md` records disjoint path ownership for each instance; otherwise serialize.
 
@@ -106,7 +106,7 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 | A review comment or a QA-skip call needs a decision beyond this Role | human | gate + relay |
 | Review and QA are clear; clean-up and checks remain | `closer` | spawn + artifact |
 | Task meets done-when; only confirmation, clean-up, and close-out remain | human, then `closer` | gate, then spawn + artifact |
-| A member needs a `.workflow/` change | human, then `manager` | relay |
+| A member needs a `.workflow/` change | human, then `workflow-owner` | relay |
 
 ### `team-lead` when stuck
 
@@ -294,6 +294,7 @@ Every in-flight Role **instance** has one row in `STATUS.md` with at least:
 - A Role card may initialize many instances in the same run (same Role or different Roles).
 - Parallel instances require **disjoint path ownership** recorded in `STATUS.md` before they edit. If ownership would overlap, serialize or re-split.
 - Members do not coordinate peer-to-peer; they return to `team-lead`. `team-lead` updates `STATUS.md` on dispatch, reclaim, and re-dispatch.
+- Every Role reads the run folder and writes its own handoff artifacts under `runs/<run-id>/`; `team-lead` alone writes `STATUS.md`.
 
 ### Artifact layout
 
