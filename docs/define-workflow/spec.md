@@ -201,7 +201,7 @@ From `templates/workflow.md`: Targets, Support, Conditions (mode, human at hando
 ## Out of scope
 
 - Creating or editing Role cards
-- Registering Cursor Agents or subagents
+- Registering Cursor Agents or sub-agents
 - Choosing product requirements, review findings, or QA results
 - Detecting whether a sub-agent can talk to the human (standing rule instead)
 - A support matrix hardcoded per harness (labels come from this session's tools or from a pasted result)

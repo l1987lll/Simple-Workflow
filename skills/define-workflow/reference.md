@@ -34,10 +34,10 @@ Apply only to the pair settled by the session-identity test. A tool present now 
 |---|---|
 | A human in the conversation | relay, gate |
 | Repo file read and write | artifact |
-| A subagent or task tool on this session | spawn. If that tool shows the child can spawn, record how many further levels it states. If it shows only this session can spawn, record `none` |
+| A sub-agent or task tool on this session | spawn. If that tool shows the child can spawn, record how many further levels it states. If it shows only this session can spawn, record `none` |
 | A way for one sub-agent to address another sub-agent | peers supported. A return only to the parent is peers unsupported |
 | A way for this main session to address another main session (another chat, or another bot) | `main-peers` supported. No such way: `main-peers` unsupported |
-| Concurrent subagents | parallel |
+| Concurrent sub-agents | parallel |
 | A way to continue a specific existing agent | resume |
 | A way for one agent to deliver to another without the human | message |
 | The named command or skill is invocable here | that slash command |

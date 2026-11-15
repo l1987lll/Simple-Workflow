@@ -140,7 +140,7 @@ R4. **Edit in place** — replace only the picked section bodies; a name change 
 
 - Creating or editing `workflow.md`
 - Defining the six business roles (Team Lead, Architect/Research, Developer, Code Reviewer, QA, closer)
-- Cursor Agent / subagent registration
+- Cursor Agent / sub-agent registration
 - Renaming a Role directory, or converting Role-Playbook ↔ Role-merged
 - Who assigns work to QA, who runs cleanup, who triggers `/retro` (process-document concerns)
 

@@ -10,7 +10,7 @@ Create a new Role card from `templates/`, or revise one under `roles/` in place.
 ## Hard rules
 
 - Do not create or edit `workflow.md`
-- Do not register Cursor Agents or subagents
+- Do not register Cursor Agents or sub-agents
 - Generated Markdown is English; explain and ask in the human's language (often Chinese)
 - Write the card as a doc an agent reads: follow `docs/agent-docs.md`—one action per bullet, steps before reference, every pointer naming a path that ships with the card
 - Write only when the needed answers are in: a new Role needs the layout and a valid new slug; a revision needs a confirmed section pick
