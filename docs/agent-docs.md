@@ -52,3 +52,4 @@ After: "Hand off only after a review pass; list findings in `review/`."
 - [ ] No rule stated twice; nothing restated that the file tree already shows
 - [ ] Names match `GLOSSARY.md`
 - [ ] The written file read back once, as its reader
+- [ ] `pwsh -File scripts/check-docs.ps1` passes
