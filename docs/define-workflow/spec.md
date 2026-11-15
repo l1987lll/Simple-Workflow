@@ -192,7 +192,7 @@ From `templates/workflow.md`: Targets, Support, Conditions (mode, human at hando
 
 - `name`: `define-workflow`
 - `disable-model-invocation: true`
-- Read `reference.md` for session identity, the this-session test, uncertain sentences, offer shape, and the run-state default
+- Read `reference.md` for session identity, the this-session test, uncertain sentences, and offer shape
 - Read `docs/agent-docs.md` for how the process document must read; read each written file back before reporting
 - Read `templates/support-prompt.md` when another pair must be judged
 - Read `templates/workflow.md` when writing
