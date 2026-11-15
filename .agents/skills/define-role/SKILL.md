@@ -1,7 +1,6 @@
 ---
 name: define-role
-description: Create a Role card under roles/<slug>/, or revise an existing card section by section.
-disable-model-invocation: true
+description: Create or revise a Role card under roles/<slug>/ when the human wants a Role added or changed — interview for purpose, boundaries, and Playbook duties, then write the card from templates, or edit only the sections they pick in an existing card.
 ---
 
 # define-role

@@ -17,6 +17,7 @@ Provide a project skill `define-role` that interviews the human and either creat
 | Skill mirror | Byte-identical copy under `.agents/skills/define-role/` so AI coding tools discover it |
 | Packaging | Skill + template files (no scaffold script) |
 | Entries | One skill, two entries: a new Role, or a revision of an existing one |
+| Invocation | Model-invoked: the always-loaded `description` names both entries |
 | Revise granularity | The human picks sections; only those sections change |
 | Revise invariants | Layout, slug, and workflow pointers are never rewritten |
 | Revision source | The card in `roles/`, never the templates |
@@ -119,8 +120,8 @@ R4. **Edit in place** — replace only the picked section bodies; a name change 
 ## SKILL.md behavior
 
 - `name`: `define-role`
-- `disable-model-invocation: true`
-- `description` names both entries (human-facing: create or revise)
+- `disable-model-invocation` omitted: the agent can fire the skill on its own, and other skills can reach it
+- `description` is model-facing and carries both entries, so it stays in context every turn
 - Read `templates/` for a new Role only; read `reference.md` for field semantics and required pieces
 - Follow the interview order and explanation duty; a revision asks only the picked sections
 - New Role: replace template placeholders; omit the speaking-style heading when default
