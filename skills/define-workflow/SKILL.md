@@ -1,7 +1,6 @@
 ---
 name: define-workflow
-description: Create or revise the workflow definition by recording harness and environment support, then offering the most likely workflows for the existing Roles.
-disable-model-invocation: true
+description: Create or revise a process document under workflows/ when the human wants a new way of working defined — interview for harness, environment, and per-pair support, then offer the workflows the existing Roles can run and write the one they accept.
 ---
 
 # define-workflow
