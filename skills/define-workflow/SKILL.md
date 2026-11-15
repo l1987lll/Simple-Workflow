@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # define-workflow
 
-Interview the human, then create or revise the process document. Spec, from the repo root: `docs/define-workflow/spec.md`. Vocabulary: repo-root `GLOSSARY.md`. Section ownership, the this-session test, and a filled fragment: [reference.md](reference.md). File shape: [templates/workflow.md](templates/workflow.md).
+Interview the human, then create or revise the process document. Spec, from the repo root: `docs/define-workflow/spec.md`. Vocabulary: repo-root `GLOSSARY.md`. Section ownership, the this-session test, and a filled fragment: [reference.md](reference.md). File shape: [templates/workflow.md](templates/workflow.md). Doc craft, from the repo root: `docs/agent-docs.md`.
 
 This skill file is English only. Generated process Markdown is English. Explain and ask in the human's language at runtime; do not put non-English script into this skill's files.
 
@@ -16,6 +16,7 @@ This skill file is English only. Generated process Markdown is English. Explain 
 - The process document names only slugs that already exist under `roles/`. Ask for an existing slug when a route names one that does not.
 - Write the process document only. Default directory is repo-root `workflows/`. Default path for a first create is `workflows/workflow.md`. Use another file name under `workflows/` when the human names one (for example `workflows/main-with-subagents.md`). When the human wants more than one process document, write each as its own file under `workflows/`; do not merge them into one file unless they ask. Do not write new process documents at repo root.
 - At Gate, list existing process documents as well as Roles. If any exist and the human has not said create versus revise which file, ask before continuing.
+- Write the process document as a doc an agent reads: follow `docs/agent-docs.md`—one action per numbered step, reference below the steps, every pointer naming a path that exists
 - Leave Role cards unchanged.
 - A slash command or skill that only the human can run is not invoked by a Role agent. Route it through the coordinating main Role (usually `team-lead`): that Role reminds the human to run it (gate + relay). Record that routing in the process document. Prefer this remind path over keeping an unsupported or uncertain agent-invoked slash as a caveat.
 - After the workflow is accepted, run step Run state and artifacts before the check. The process document must say how a run records STATUS, who may write it, how each in-flight Role instance is listed, where handoff artifacts live, and how parallel instances get disjoint path ownership.
@@ -205,7 +206,7 @@ Done when every check passes, or each failure was discussed and the human chose.
 
 ### 7. Write and report
 
-Fill [templates/workflow.md](templates/workflow.md) with the pairs, labels, conditions, roles used, flow, routes, run state and artifacts, and caveats. One slash row per command; omit it when the workflow calls no command. One handoff table and one when-stuck table per slug. Conditions record, per pair, the mode, whether a human is available at handoffs, and whether Roles share one repo. Caveat lines match the fragment in [reference.md](reference.md). The Caveats section is `(none)` when nothing was kept. Report the path.
+Fill [templates/workflow.md](templates/workflow.md) with the pairs, labels, conditions, roles used, flow, routes, run state and artifacts, and caveats. One slash row per command; omit it when the workflow calls no command. One handoff table and one when-stuck table per slug. Conditions record, per pair, the mode, whether a human is available at handoffs, and whether Roles share one repo. Caveat lines match the fragment in [reference.md](reference.md). The Caveats section is `(none)` when nothing was kept. Read the written file back; fix a broken list item or a stray line before reporting the path.
 
 Done when the file under `workflows/` matches the accepted workflow after the check, caveats and conditions are visible, the path was reported, and Role cards are unchanged.
 
@@ -223,5 +224,6 @@ Done when the file under `workflows/` matches the accepted workflow after the ch
 - [ ] The check passed on this create or revise, or each failure was discussed and the human chose
 - [ ] Conditions recorded per pair
 - [ ] Run state and artifacts accepted: STATUS path, single writer, per-instance rows, artifact layout, parallel path ownership
+- [ ] Written file read back; no broken list item or stray line
 - [ ] Process document written in English; path reported
 - [ ] Role cards unchanged

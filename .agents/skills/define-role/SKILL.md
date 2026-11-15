@@ -5,13 +5,14 @@ description: Create or revise a Role card under roles/<slug>/ when the human wan
 
 # define-role
 
-Create a new Role card from `templates/`, or revise one under `roles/` in place. Spec, from the repo root: `docs/define-role/spec.md`. Field help: [reference.md](reference.md).
+Create a new Role card from `templates/`, or revise one under `roles/` in place. Spec, from the repo root: `docs/define-role/spec.md`. Field help: [reference.md](reference.md). Doc craft, from the repo root: `docs/agent-docs.md`.
 
 ## Hard rules
 
 - Do not create or edit `workflow.md`
 - Do not register Cursor Agents or subagents
 - Generated Markdown is English; explain and ask in the human's language (often Chinese)
+- Write the card as a doc an agent reads: follow `docs/agent-docs.md`—one action per bullet, steps before reference, every pointer naming a path that ships with the card
 - Write only when the needed answers are in: a new Role needs the layout and a valid new slug; a revision needs a confirmed section pick
 - A revision edits nothing before the human confirms the section pick
 - Playbook answer skipped → `(none yet)` on a new card; on a revision a skipped section keeps its current text, and only a section the human clears becomes `(none yet)`
@@ -95,8 +96,9 @@ Before each: say what the section is for, and that *who is next* lives in `workf
 
 1. Create `roles/<slug>/` from the matching templates
 2. Substitute placeholders
-3. List written paths
-4. If repo-root `workflow.md` is missing, warn only—do not create it
+3. Read the written files back; fix a broken list item or a stray line
+4. List written paths
+5. If repo-root `workflow.md` is missing, warn only—do not create it
 
 ## Revise an existing Role
 
@@ -121,7 +123,8 @@ Run the matching questions from the interview with their explanations.
 3. A name change updates the `#` title in every file of the card
 4. Speaking style: insert `## Speaking style` after Purpose for a custom answer; delete the heading and its body for default
 5. Copy nothing from `templates/` and substitute no placeholders
-6. Report the changed sections and the file paths
+6. Read the written files back; fix a broken list item or a stray line
+7. Report the changed sections and the file paths
 
 ## Completion criteria
 
@@ -134,6 +137,7 @@ Run the matching questions from the interview with their explanations.
 - [ ] All six Playbook headings present
 - [ ] `workflow.md` pointers present; Role-Playbook has required `./PLAYBOOK.md` read; Role-merged stable top requires reading Playbook region below
 - [ ] `workflow.md` untouched
+- [ ] Written files read back; no broken list item or stray line
 - [ ] Paths reported to the human
 
 **Existing Role**
@@ -143,4 +147,5 @@ Run the matching questions from the interview with their explanations.
 - [ ] Layout, slug, and workflow pointers untouched
 - [ ] Skipped sections untouched; cleared sections `(none yet)`
 - [ ] `workflow.md` untouched
+- [ ] Written files read back; no broken list item or stray line
 - [ ] Changed sections and paths reported

@@ -124,6 +124,7 @@ R4. **Edit in place** — replace only the picked section bodies; a name change 
 - `description` is model-facing and carries both entries, so it stays in context every turn
 - Read `templates/` for a new Role only; read `reference.md` for field semantics and required pieces
 - Follow the interview order and explanation duty; a revision asks only the picked sections
+- Follow `docs/agent-docs.md` for how the card reads, and read each written card back before reporting
 - New Role: replace template placeholders; omit the speaking-style heading when default
 - Revise: edit the existing card in place; keep everything outside the picked sections
 - Completion criteria split by entry: new (files written, six Playbook headings, pointers present) and revise (pick confirmed first, only picked sections differ, pointers untouched)
