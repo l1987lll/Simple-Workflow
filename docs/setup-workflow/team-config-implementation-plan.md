@@ -1,7 +1,5 @@
 # Team config files Implementation Plan
 
-> Status: historical plan for the v1 schema. The current schema is v1.1 (adds `workflow_owner_id`), setup is run by the `workflow-owner` with three intents plus Check only, and one `.workflow/` serves every harness. See [team-config-design.md](team-config-design.md) for the current design.
-
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Ship per-Team YAML configs at `.workflow/teams/<id>.yaml`, and update setup-workflow so new teams, binding, and Check follow the approved design.
