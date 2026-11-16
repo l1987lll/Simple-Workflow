@@ -10,20 +10,6 @@ Read before classifying support or writing the process document. Vocabulary matc
 | Role card | When this Role hands off or is stuck; how this Role does its craft |
 | `roles/` | Role cards, created by `define-role` |
 
-## Role selection
-
-A workflow runs only the Roles the human picks. Settle that set before offering shapes.
-
-- Create: list every `roles/*/ROLE.md` with its one-line purpose and ask which take part.
-- Revise: read the Roles section of the file, show the Roles in it, the cards that are not in it, and which route tables each current Role has, then ask what to keep, add, or remove.
-- Keep: the Roles line, the Flow mentions, and both route tables stay.
-- Add: build a Roles line, one handoff table, and one when-stuck table from that card's Handoffs and When stuck bullets.
-- Remove: delete the Roles line, both route tables, and every Flow mention. Re-point a route that named it, or drop the removal.
-- Renumber the Flow after any change.
-- On a revise, show the adjusted Flow and every added or removed route, then ask the human to accept it with the words in `SKILL.md`.
-
-The Roles section, the route tables, and the Flow are one set: every listed Role has both tables, and every route target is a listed Role.
-
 ## Session identity
 
 Decide this session's pair before labeling interactions. State the pair and the facts that settled it. Do not ask the human which pair this session is when the rules below settle it.
