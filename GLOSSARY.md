@@ -101,7 +101,7 @@ One agent team executing a process document (for example a Grok Role-bot group, 
 _Avoid_: session (except as informal shorthand for a chat), install (that is the `.workflow/` tree)
 
 **Team config**:
-`.workflow/teams/<id>.yaml` for one Team (`id` = platform team-lead id or GUID; filename stem equals `id`; not short `t1`/`t2`). v1 fields in order: `id`, `workflow`, `team_lead_id`, `harness`. Agents read their bound Team config path, then the `workflow` process document named inside. If either is missing, stop. Team config is the only current-workflow pointer.
+`.workflow/teams/<id>.yaml` for one Team (`id` = platform team-lead id or GUID; filename stem equals `id`; not short `t1`/`t2`). v1.1 fields in order: `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, `harness`. Agents read their bound Team config path, then the `workflow` process document named inside. If either is missing, stop. Team config is the only current-workflow pointer.
 _Avoid_: process-document path written outside Team config, install (that is the `.workflow/` tree)
 
 **Handoff artifact**:
