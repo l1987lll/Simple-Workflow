@@ -6,7 +6,7 @@ Tracked work that is not done in Role cards or process documents yet.
 
 **Status:** done  
 **Raised:** 2026-11-08  
-**Done:** [`setup-workflow`](skills/setup-workflow/SKILL.md) writes `.workflow/teams/<id>.yaml` per Team with `id`, `workflow`, `team_lead_id`, and `harness`; the Team config is the only current-workflow pointer, and every agent reads it before the document. Role cards keep pointing at [`workflows/`](workflows/). Schema and runtime rule: [`setup-workflow` reference](skills/setup-workflow/reference.md#team-config-format).
+**Done:** [`setup-workflow`](skills/setup-workflow/SKILL.md) writes `.workflow/teams/<id>.yaml` per Team with `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, and `harness`; the Team config is the only current-workflow pointer, and every agent reads it before the document. Role cards keep pointing at [`workflows/`](workflows/). Schema and runtime rule: [`setup-workflow` reference](skills/setup-workflow/reference.md#team-config-format).
 
 
 
