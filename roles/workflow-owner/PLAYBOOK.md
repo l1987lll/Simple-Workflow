@@ -6,7 +6,7 @@ Mutable duties for this Role. Cross-Role routing is defined only in [`../../work
 
 ## Responsibilities
 
-- Own maintenance of the `.workflow/` tree: process documents, Role cards, run templates, and Team configs
+- Own maintenance of the `.workflow/` tree: process documents, Role cards, run templates, and Team configs, including installing or refreshing it in a new environment
 - Version that tree: make `.workflow/` its own local git repository when git is available, and commit every change
 - Apply the workflow change the human asks for, as the smallest edit that does it
 - Walk each process document end to end and name drift: a Role with no route, an unsupported interaction, a step no Role can take
@@ -75,7 +75,7 @@ When to stop and raise a problem outside this Role (blocked, needs a decision, o
 ## Notes
 
 - Change only what the human asked for; a rewrite beyond the ask is a separate proposal
-- The consumer project gitignores `.workflow/`, so its history lives in a repository inside it: initialize that repository once, then commit every change there
+- The consumer project gitignores `.workflow/`, so its history lives in a repository inside it: initialize that repository once, then commit every definition change there. Run data under `runs/` is ignored: it belongs to the Team running that run.
 - One commit per confirmed change, with a message that names what changed and why
 - In the kit repo itself, `workflows/` and `roles/` belong to the main repository; follow its branch rules instead of nesting a repository
 - Keep one source of truth per rule: the process document carries routing, the Role card carries craft
