@@ -22,27 +22,23 @@ Not the same as a **run** (`runs/<run-id>/`).
 
 ```text
 .workflow/
-  roles/               # shared by every Team and harness
-  workflows/           # shared; process documents only
-  project-standards/   # shared
+  roles/
+  workflows/           # process documents only
   teams/
     216ab690-efa9-4760-9938-e54be49013bd.yaml
     a1b2c3d4-e5f6-7890-abcd-ef1234567890.yaml
-  runs/                # one folder per run; each run belongs to one Team
-  .git/                # the .workflow repository
+  runs/
+  project-standards/
 ```
 
-One `.workflow/` serves every harness on the project. `roles/`, `workflows/`, and `project-standards/` are shared; `teams/` holds one config per Team, and `runs/` holds every Team's runs side by side.
-
-## Config schema (v1.1)
+## Config schema (v1)
 
 Field order (required):
 
 1. `id` — unique Team id (platform team-lead id or GUID; matches filename stem; typically same as `team_lead_id`). Do not use short codes `t1`, `t2`, …
 2. `workflow` — path relative to `.workflow/workflows/`
 3. `team_lead_id` — unique lead identifier (platform agent/session id when available)
-4. `workflow_owner_id` — the workflow-owner's platform agent or session id for this Team; same as `team_lead_id` when one session holds both; a GUID the human remembers when the platform id is unknown
-5. `harness` — lowercase product slug (`grok`, `cursor`, `deepseek`, …)
+4. `harness` — lowercase product slug (`grok`, `cursor`, `deepseek`, …)
 
 Example:
 
@@ -50,17 +46,14 @@ Example:
 id: 216ab690-efa9-4760-9938-e54be49013bd
 workflow: all-main-agents.md
 team_lead_id: 1eb63955-4fed-4a73-a5b5-b817d86ae77f
-workflow_owner_id: 1eb63955-4fed-4a73-a5b5-b817d86ae77f
 harness: cursor
 ```
 
 Rules:
 
-- Prefer a real platform id for `team_lead_id` and `workflow_owner_id` (Grok agent id or Cursor session id).
-- If unavailable at create time, generate a GUID, write it into the yaml, and require the human to remember the same id (standing instructions / session notes).
-- A config written before `workflow_owner_id` existed has four keys; the next Update install resolves the owner and adds it, and Check fails a config that still lacks it.
-- A New install creates only Teams it can bring up now: an all-main-agents harness may create several bot groups at once, and a sub-agent harness creates one Team. Later Teams come through Add Team.
-- No other fields in v1.1; later settings may be added without renaming the file.
+- Prefer a real platform id for `team_lead_id` (Grok agent id or Cursor session id).
+- If unavailable at create time, generate a GUID, write it into the yaml, and require the lead agent to remember the same id (standing instructions / session notes).
+- No other fields in v1; later settings may be added without renaming the file.
 
 ## Agent binding (runtime)
 
@@ -69,18 +62,15 @@ Rules:
 3. Runtime hard rule for every agent in the Team: read that config path, then read `workflow` from it. If the path, file, or target process document is missing/unreadable, **stop**.
 4. Team config is the only current-workflow pointer.
 5. Sub-agents / other Roles inherit the same config path from the lead brief or their own instructions.
-6. **Detect bound config (setup create vs update):** standing instructions path first; else `teams/*.yaml` whose `team_lead_id`/`workflow_owner_id`/`id` equals this session's platform id; else none → create. Multiple matches for the same lead id → stop / fail Check. Update install updates the bound file; Add Team creates a new yaml for the new Team.
+6. **Detect bound config (setup create vs update):** standing instructions path first; else `teams/*.yaml` whose `team_lead_id`/`id` equals this session's platform id; else none → create. Multiple matches for the same lead id → stop / fail Check. Re-setup updates the bound file; add-group creates a new yaml for the new lead.
 
 ## setup-workflow changes
 
-- **Runner:** the `workflow-owner` runs setup. When none is recorded, setup resolves one from the bound config, this session, a visible bot, or the human's choice, then records `workflow_owner_id`.
-- **New install:** the full set of people and process, for one or more Teams chosen by the human. Every Team uses the one process document chosen for the install. Copy the shared trees, write this Team's config, bring the Teams up, then write each additional Team's config once its bots exist; bind the path into lead and owner instructions.
-- **Update install:** apply the accepted trees and have every existing Role instance on this harness re-read its card—this session now, reachable bots or sessions by message, unreachable ones as pending. The update covers every Team on this harness; Teams on another harness sync on their own run. The human approves full or selective replace. Record a missing `workflow_owner_id` on this Team's yaml.
-- **Add Team:** a new harness or bot group joins the same `.workflow/` with a new yaml; on a sub-agent harness run it from the new Team's session; write the new yaml after its bots exist; no tree copy; do not overwrite other Teams' configs.
-- **Check only:** no tree copy, no yaml rewrite.
-- **Gitignore:** the consumer repository keeps ignoring `.workflow/`; the tree's own repository tracks it.
-- **Commit:** after Check passes, setup commits the definition changes in the `.workflow/` repository and reports the commit id. `.workflow/.gitignore` ignores `runs/*` and keeps `runs/_template/`, so run data stays out of the definition history.
-- **Check:** every expected Team config exists and parses; five keys in order; `workflow` target readable; lead and owner instructions cite the matching path; both ids present.
+- **First install / new Team:** create `teams/<id>.yaml`. Ask which process document to use; record harness; resolve or generate `team_lead_id`; bind path + id into lead instructions.
+- **Add Team:** create another yaml; do not treat as tree re-setup; do not overwrite other teams’ configs.
+- **Update install:** may change trees and/or update a named team’s `workflow` / metadata only with explicit approval; never silent overwrite of other team yamls.
+- **Gitignore:** entire `.workflow/` remains ignored when consumer `.gitignore` exists (unchanged).
+- **Check:** every expected team config exists and parses; `workflow` target readable; lead instructions cite the matching path; `team_lead_id` present.
 
 ## Out of scope (v1)
 
@@ -91,9 +81,8 @@ Rules:
 ## Acceptance
 
 - [ ] Setup writes Team configs under `.workflow/teams/`
-- [ ] A new Team creates a new yaml with `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, and `harness` in that order
-- [ ] Lead, owner, and members are instructed to read that yaml first
-- [ ] Setup resolves the workflow-owner and records it; a missing owner is recorded on the next update and fails Check until then
+- [ ] New Team creates a new yaml with `id`, `workflow`, `team_lead_id`, `harness` in that order
+- [ ] Lead (and members when possible) instructed to read that yaml first
 - [ ] Setup can detect this session's bound Team config (instructions path, then lead-id match) and choose create vs update without guessing another Team's file
 - [ ] Check fails if config or workflow target missing
 - [ ] GLOSSARY, README, setup-workflow skill/reference updated in the implementation plan

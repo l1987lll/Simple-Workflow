@@ -6,7 +6,7 @@ Mutable duties for this Role. Cross-Role routing is defined only in [`../../work
 
 ## Responsibilities
 
-- Own maintenance of the `.workflow/` tree: process documents, Role cards, run templates, and Team configs, including installing or refreshing it in a new environment
+- Own maintenance of the `.workflow/` tree: process documents, Role cards, run templates, and Team configs
 - Version that tree: make `.workflow/` its own local git repository when git is available, and commit every change
 - Apply the workflow change the human asks for, as the smallest edit that does it
 - Walk each process document end to end and name drift: a Role with no route, an unsupported interaction, a step no Role can take

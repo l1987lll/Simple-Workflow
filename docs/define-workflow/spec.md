@@ -28,6 +28,7 @@ Provide a project skill `define-workflow` that interviews the human and creates 
 | Offer order | At most three options. Feasible on every pair first. Among those, less human participation first. `relay` on every hop, and `gate`, count as more human participation |
 | Offer grain | Runnable rows, not a sketch. Columns: When, Interaction, Next, what is handed. Every Handoff and When stuck bullet of each participating Role. Each Role instance marked main agent or sub-agent |
 | Run record | Chat history is not the source of truth across agents. Default: `runs/<run-id>/STATUS.md`, single writer is the coordinating main Role |
+| Roles in the workflow | Settled on both create and revise. Create picks from the cards; revise keeps, adds, or removes. An added Role gets both route tables; a removed Role loses them and its Flow mentions; the Flow is renumbered and confirmed with the human |
 
 ## Repository layout
 
@@ -52,6 +53,7 @@ Say the step name, then explain in 1–2 sentences, then ask. Chinese names:
 | Gate | Confirm roles |
 | 1 | Harness and environment |
 | 2 | Support |
+| 3 | Roles |
 | 4 | Choose workflow |
 | 5 | Run state and artifacts |
 | 6 | Check |
@@ -108,15 +110,21 @@ A missing line is `uncertain`. After each result, say that pair's unsupported an
 
 **Slash.** Label each command a Role card or the accepted workflow names. Support is per command.
 
-### 3. Create or revise
+### 3. Roles
 
-Revise: read the chosen file, restate caveats, ask what changes. Keeping the shape skips the menu in step 4. Steps 5–6 still run.
+Ask which Roles take part before offering shapes. Create: list every card with its one-line purpose and ask which take part. Revise: show the Roles in the file, the cards that are not in it, and the route tables each current Role has; ask what to keep, add, or remove.
 
-Create: continue to step 4. Default path `workflows/workflow.md` unless the human named another file under `workflows/`.
+Apply the answer: a kept Role keeps its Roles line and both route tables; an added Role gets a Roles line and both tables built from its card; a removed Role loses its Roles line, both route tables, and every Flow mention, and any route that named it is re-pointed or the removal is dropped. Renumber the Flow.
+
+On a revise, show the adjusted Flow and every added or removed route, then ask the human to accept it. On a create, the Role set is confirmed and the Flow arrives with the accepted shape.
 
 ### 4. Workflows
 
-Read each Role card, including `PLAYBOOK.md` or the Playbook region. Draft from Handoffs and When stuck. Who is next is this file; when work leaves stays on the Role card.
+Revise: read the chosen file, restate caveats, ask what changes beyond Roles. Keeping the shape skips the menu. Steps 5–6 still run.
+
+Create: default path `workflows/workflow.md` unless the human named another file under `workflows/`. Build the offer from the Roles chosen in step 3.
+
+Draft from the chosen cards' Handoffs and When stuck, including `PLAYBOOK.md` or the Playbook region. Who is next is this file; when work leaves stays on the Role card.
 
 Each option states, per Role, main agent or sub-agent. A sub-agent cannot talk with the human and returns to the main session that created it. A sub-agent spawns only when every pair's `subagent-depth` allows that level. Two sub-agents communicate only when every pair's peers label is supported. Two main sessions communicate only when every pair's `main-peers` is supported; otherwise the human uses relay. Fewer main agents is less human participation.
 
