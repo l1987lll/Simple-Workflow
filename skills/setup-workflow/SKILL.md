@@ -8,11 +8,13 @@ disable-model-invocation: true
 
 Install or sync the kit's Role cards, process documents, run templates, project-standards templates, and Team configs in a consumer project's `.workflow/` directory.
 
-Only the `workflow-owner` runs this skill. If another Role session invoked it, stop and say the `workflow-owner` runs it; the human designates the owner first when none exists.
+Only the owning main Role runs this skill. In a **Bot environment** that is `workflow-owner`; in a **Chat Session** it is `team-lead`, because the Chat Session has exactly one main agent and no separate `workflow-owner`. If another Role session invoked it, stop and say which Role runs it.
 
 One `.workflow/` serves every harness that works on the project. `roles/`, `workflows/`, and `project-standards/` are shared by all Teams; each Team has one `teams/<id>.yaml`, and every run belongs to one Team. Adding a harness or another bot group means adding a Team, not copying the trees again.
 
 The human picks one of four intents: **New install** (the full set of people and process, creating one or more Teams), **Update install** (apply the kit's definition changes to every Team on this harness, then have every Role instance in those Teams re-read it), **Add Team** (another harness or bot group on the same `.workflow/`), or **Check only**.
+
+The project supports two environment kinds. A **Chat Session** has exactly one main agent, so it may install only a workflow with one main agent. A **Bot environment** may have several main agents and may install either shape. Detect the kind from the runtime before Choose workflow; if the runtime does not settle it, ask the human once. Details: [reference.md](reference.md#environment-kind).
 
 Owner discovery, intents, layout, human actions, Role-bot flow, Team config format, standards, and the end-to-end check list: [reference.md](reference.md). Vocabulary: repo-root `GLOSSARY.md`.
 
@@ -29,6 +31,7 @@ This skill lives in the Simple-Workflow kit (and later as a globally installed s
 - Never copy trees for a new Team. A new harness or bot group joins the existing `.workflow/` as a new Team with its own `teams/<id>.yaml`.
 - Copy only the kit's `roles/`, `workflows/`, `runs/` (including `runs/_template/`), and `project-standards/`. Copy `workflows/` recursively, including `workflows/subflows/`. Never copy the kit's `skills/`, `docs/`, root README, GLOSSARY, OPEN_ISSUES, AGENTS, LICENSE, `.agents/`, or `.git`.
 - Detect this session's harness id from the runtime environment: the platform or product name in lowercase slug form. `cursor`, `grok`, and `deepseek` are examples, not an allowlist. If the id is unknown, ask the human once.
+- Detect this session's **environment kind** from the runtime: a bot identity with bot creation or messaging is a Bot environment; one chat session with only a sub-agent tool is a Chat Session. If the runtime does not settle it, ask the human once. A Chat Session may install only a main workflow with exactly one main agent; a Bot environment may install any main workflow. A kept Team config whose workflow breaks this limit fails Check and must be changed.
 - Each Team has one config file at `.workflow/teams/<id>.yaml` with `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, and `harness` in that order; `id` matches the filename stem. The `workflow` value names a main workflow at the top level of `.workflow/workflows/`, never a file under `.workflow/workflows/subflows/`. Schema, identifier rules, and create-versus-update cases: [reference.md](reference.md#team-config-format). Team config is the only current-workflow pointer.
 - `workflow_owner_id` names the session or bot that runs this skill for that Team and holds the `.workflow/` write permission. Resolve it before any write: [reference.md](reference.md#find-the-workflow-owner).
 - Every run resolves this session's **bound** Team config before deciding create versus update: [reference.md](reference.md#detect-this-sessions-bound-team-config). Stop when more than one `teams/*.yaml` matches the same lead id.
@@ -90,23 +93,23 @@ Done when the install root is known and the destination is `<chosen-path>/.workf
 
 This step's name is Detect install and owner.
 
-Detect two things and report both before asking anything else: whether the shared install exists, and whether this session already belongs to a Team.
+Detect two things and report both before asking anything else: whether the shared install exists, and whether this session already belongs to a Team. Also record the **environment kind**: a Bot environment when the session has a bot identity and can create or message named bots, or a Chat Session when it is one chat session with only a sub-agent tool. Ask once when the runtime does not settle it.
 
 1. **Shared install.** Content under `.workflow/roles/`, `.workflow/workflows/*.md`, or `.workflow/project-standards/`. This is shared by every harness, so one harness installing makes it true for all of them.
 2. **This session's Team.** A `teams/*.yaml` bound to this session: the exact path in this session's standing instructions, or a file whose `team_lead_id`, `workflow_owner_id`, or `id` equals this session's platform id. A populated `teams/` directory does not prove this session has a Team.
-3. Resolve the `workflow-owner` with [reference.md](reference.md#find-the-workflow-owner): this session's bound Team config first, then this session's own Role, then a visible workflow-owner bot, then the human's choice.
+3. Resolve the `workflow-owner` with [reference.md](reference.md#find-the-workflow-owner): this session's bound Team config first, then this session's own Role, then a visible workflow-owner bot, then the human's choice. In a Chat Session, the single main `team-lead` is the owner; do not resolve a separate owner, and skip rules 4–5.
 4. When no owner is found, tell the human that the `workflow-owner` is the Role dedicated to maintaining the workflow. Then ask the human to pick one: the current session becomes `workflow-owner`, an existing bot becomes it, or a new one is created. That pick is a human action.
 5. When the human picks the current session, designate it as `workflow-owner` for this run and adopt the Role before any write: read `.workflow/roles/workflow-owner/ROLE.md` when it exists, or the kit's `roles/workflow-owner/ROLE.md` after Find kit on a New install. Adopting means the session carries the Role and its maintenance rules—write definitions only, commit every definition change. Step 10 later binds the Team config path; it does not adopt the Role again.
 
 When the shared install exists but this session has no Team, say that this environment joins as a new Team. When the human says this session takes over an existing Team, ask which `teams/*.yaml` and treat that Team as kept.
 
-When the resolved owner is not this session, stop and tell the human to run setup from that owner. Where this session can message the owner bot, send it the request and stop; do not continue as it.
+When the resolved owner is not this session, stop and tell the human to run setup from that owner. Where this session can message the owner bot, send it the request and stop; do not continue as it. In a Chat Session, there is no separate owner bot: this session is the single main `team-lead`, so it is both the lead and the workflow owner.
 
 When the human wants a new owner bot, create and initialize it as `workflow-owner` when the platform allows, then stop and tell the human to run setup from it. When the platform cannot create bots, ask the human to create it and run setup there.
 
 On a first install, the human picks the session that becomes the owner; when that is not this session, stop and let that session run the setup.
 
-Done when the shared-install state and this session's Team state are known, one `workflow-owner` is designated, and the owner Role is adopted when its installed card exists; or the human declined and this run stopped.
+Done when the shared-install state and this session's Team state are known, the environment kind (Bot or Chat Session) is recorded, one owner is designated (`workflow-owner` in a Bot environment, `team-lead` in a Chat Session), and the owner Role is adopted when its installed card exists; or the human declined and this run stopped.
 
 ### 3. Intent
 
@@ -129,7 +132,7 @@ If this run's intent is Add Team or Check only, skip this step.
 
 Detect the kit source in the order in [reference.md](reference.md#kit-detection-order) and stop at the first valid source. This skill's own folder is not one: [reference.md](reference.md#valid-kit-source).
 
-Done when a valid kit source is identified and the human has not objected to it, or this step was skipped; and, on a New install where this session is the owner, the kit's `workflow-owner` card was read and adopted before Copy trees.
+Done when a valid kit source is identified and the human has not objected to it, or this step was skipped; and, on a New install where this session is the owner, the owner's Role card (`workflow-owner` in a Bot environment, `team-lead` in a Chat Session) was read and adopted before Copy trees.
 
 ### 5. Copy trees
 
@@ -160,11 +163,11 @@ This step's name is Choose workflow.
 
 If this run's intent is Check only, skip this step.
 
-Run **bound-Team detection** ([reference.md](reference.md#detect-this-sessions-bound-team-config)). On Update install that keeps Team configs, read the detected bound config, tell the human its path and `workflow` value, and skip the ask when the file exists, has the required keys, and its `workflow` target is still readable. Otherwise say why and ask which workflow to use for **this Team**; that answer creates or fixes only this session's yaml.
+Run **bound-Team detection** ([reference.md](reference.md#detect-this-sessions-bound-team-config)). On Update install that keeps Team configs, read the detected bound config, tell the human its path and `workflow` value, and skip the ask when the file exists, has the required keys, and its `workflow` target is still readable. In a Chat Session, do not skip when that target's `## Roles` section has more than one main agent; fail Check and ask the human to choose a one-main workflow. Otherwise say why and ask which workflow to use for **this Team**; that answer creates or fixes only this session's yaml.
 
 If this run's intent is Add Team, ask which workflow the **new** Team should use.
 
-Otherwise list every main process document under the kit (or just-copied) `workflows/*.md`; do not list files under `workflows/subflows/`. For each file, give its path and a one-line shape summary from its opening. Ask the human (human action): **Which workflow do you want to install?** A number or a filename answers. Recommend from the document's own Targets when that is obvious for this harness. Sub-workflows travel with the main workflow that reaches them and are not separate choices. Do not write the Team yaml until the human has chosen or kept a document.
+Otherwise list every main process document under the kit (or just-copied) `workflows/*.md`; do not list files under `workflows/subflows/`. For each file, give its path and a one-line shape summary from its opening. A Chat Session lists only workflows whose `## Roles` section has exactly one main agent; a Bot environment lists every main workflow and marks the main-agent count. Ask the human (human action): **Which workflow do you want to install?** A number or a filename answers. Recommend from the document's own Targets when that is obvious for this harness. Sub-workflows travel with the main workflow that reaches them and are not separate choices. Do not write the Team yaml until the human has chosen or kept a document.
 
 On a **New install**, ask which process document to install once; every Team this install creates uses that one document. Then settle how many Teams this install creates in this environment (human action), default one: this session's Team. Ask that count only when this run can bring several Teams up: an all-main-agents harness creates one bot group per Team. On a sub-agent harness, create one Team and say that more Teams come later through Add Team, each a new main session. Every Team uses this session's harness. For each additional Team, ask only its display name and its prefix (for example `T2`).
 
@@ -230,13 +233,13 @@ This step's name is Initialize.
 
 If this run's intent is Check only, skip this step unless the human explicitly asked to re-init.
 
-This session is the `workflow-owner` for this Team; its Role was adopted before the writes. Initialize from the **shape** of the selected process document, and do only this session's harness. Binding the Team config path below is the part of initialization that waits for the config to exist; do not adopt the Role again.
+This session is the owner Role for this Team (`workflow-owner` in a Bot environment, `team-lead` in a Chat Session); its Role was adopted before the writes. Initialize from the **shape** of the selected process document, and do only this session's harness. Binding the Team config path below is the part of initialization that waits for the config to exist; do not adopt the Role again.
 
 - **Several main agents with one execution lead** (the shape with `manager`, `team-lead`, `assistant`, and `workflow-owner` as main agents): this chat stays `workflow-owner`. Tell the human which other main sessions to open for this Team, giving each one its Role card and the Team config path. `team-lead` is the execution lead that spawns the other Roles; do not pre-spawn them during setup. A New install here creates this one Team; more Teams come later through Add Team, each with its own main sessions.
 - **Every Role a main agent** (for example Grok Bot on that shape): this session bot is the `workflow-owner` bot of this Team. Create or configure the other Role bots, including a `team-lead` bot, following the naming, shared-instructions, create/init-plan, and create flow in [reference.md](reference.md#role-bot-naming-all-main-agents). On a New install that creates several Teams, repeat that flow once per Team with its own prefix; do not re-initialize this session for the other Teams.
-- **One main agent with sub-agents** (a legacy shape that names only `team-lead`): this chat becomes `workflow-owner` for the config, and `team-lead` runs as another chat. Follow the same binding rule below.
+- **One main agent with sub-agents** (Chat Session): this chat is `team-lead` and the owner for this Team. It runs the team loop with sub-agents; do not open another main session for this Team. Do not adopt the `workflow-owner` Role.
 
-**Team config binding (hard runtime gate)**, every shape: write the exact Team config path into the `workflow-owner` instructions, the lead's instructions, and every member Role bot's instructions when the platform allows. The text must say: read that path first, open the `workflow` target named inside, and stop if the path, file, required keys, or target is missing. Also record `team_lead_id` and `workflow_owner_id`. Never put a Team-specific yaml path into shared Role cards. For the sub-agent shape, require spawn briefs to carry the same path.
+**Team config binding (hard runtime gate)**, every shape: write the exact Team config path into the owner's instructions (`workflow-owner` in a Bot environment, `team-lead` in a Chat Session), the lead's instructions, and every member Role bot's instructions when the platform allows. The text must say: read that path first, open the `workflow` target named inside, and stop if the path, file, required keys, or target is missing. Also record `team_lead_id` and `workflow_owner_id`. Never put a Team-specific yaml path into shared Role cards. For the sub-agent shape, require spawn briefs to carry the same path.
 
 On an **all-main-agents** shape, write each Team's config after that Team's bots are created, using the created lead and owner ids, then bind the path. On a **sub-agent** shape the config was written in step 7; bind its generated `team_lead_id` into the lead session's instructions.
 
@@ -246,7 +249,7 @@ If a tool call was actually blocked pending a permission grant, remind the human
 
 On a New install, bring up every Team this run created: on an all-main-agents harness that is one bot group per Team. After each additional Team's bots exist, write that Team's config with the created ids and say it was recorded. No Team exists without a session or bot group behind it; a Team added later goes through Add Team.
 
-Done when this session is initialized as `workflow-owner` (or the human's decline is recorded), the other main sessions or bots this run can configure are ready or waiting only on an applied human action, other-harness init is listed as follow-up only, and no out-of-scope human-action reminder was given.
+Done when this session is initialized as the owner Role (`workflow-owner` in a Bot environment, `team-lead` in a Chat Session), or the human's decline is recorded; the other main sessions or bots this run can configure are ready or waiting only on an applied human action; other-harness init is listed as follow-up only; and no out-of-scope human-action reminder was given.
 
 ### 11. Check
 
@@ -254,7 +257,7 @@ This step's name is Check.
 
 Always run Check after the writes, including every update, add-team, or check-only. Walk each selected main process document and every sub-workflow it reaches end to end: the installed trees, Team configs, run template, routes, and required interactions must let a run start and follow every hop. Checklist: [reference.md](reference.md#end-to-end-check).
 
-Fail when this session's bound config is missing (when this run should have one), unreadable, missing required keys, missing `workflow_owner_id`, or its `workflow` target is missing or unreadable, and when more than one `teams/*.yaml` matches the same lead id. Do not fail solely because another Team's config is absent, unless this run was supposed to create it.
+Fail when this session's bound config is missing (when this run should have one), unreadable, missing required keys, missing `workflow_owner_id`, or its `workflow` target is missing or unreadable, and when more than one `teams/*.yaml` matches the same lead id. Fail when the selected main workflow has more than one main agent in a Chat Session. Do not fail solely because another Team's config is absent, unless this run was supposed to create it.
 
 When a hop cannot be walked, name the process document, the route, and the problem. Fix it when this skill is allowed to; otherwise stop and tell the human.
 
@@ -276,7 +279,7 @@ Tell the human:
 
 - Intent: New install, Update install, Add Team, or Check only
 - Consumer project root and `.workflow/` path
-- The `workflow-owner` for this Team: how it was found or chosen, and its id
+- The owner for this Team (`workflow-owner` in a Bot environment, `team-lead` in a Chat Session): how it was found or chosen, and its id
 - Kit source used (skipped on Add Team or Check only)
 - On Update install: which trees were replaced, which were kept, which Roles in this harness's Teams re-read the installed definitions, and which are still pending
 - On Add Team: the new Team config path, which Role bots were created when this session creates bots, and that the shared trees and other Team yamls were left untouched
@@ -298,10 +301,10 @@ Done when that report has been given, Role process pointers still point at the `
 
 ## Completion criteria
 
-- [ ] Ran as `workflow-owner`: the owner Role was adopted before any write, and the Team config path was bound at Initialize
+- [ ] Ran as the owner Role (`workflow-owner` in a Bot environment, `team-lead` in a Chat Session): the Role was adopted before any write, and the Team config path was bound at Initialize
 - [ ] Consumer project root known; destination is `<project>/.workflow/`
 - [ ] Shared-install state and this session's Team state detected; intent recorded (New install, Update install, Add Team, or Check only)
-- [ ] `workflow-owner` resolved and recorded in the Team config, or the run stopped for the human's choice
+- [ ] Owner resolved and recorded in the Team config, or the run stopped for the human's choice
 - [ ] On Update install: trees to replace recorded; that the update covers every Team on this harness stated; no silent overwrite of trees or of other Teams' yamls; every existing Role instance in those Teams re-read the installed definitions or is listed as pending
 - [ ] On Add Team: no trees were copied, other Team yamls were kept, and a new Team yaml was created; this-session init matched a new harness or an extra bot group
 - [ ] On Check only: no trees were replaced and Team yamls were not rewritten
@@ -312,6 +315,7 @@ Done when that report has been given, Role process pointers still point at the `
 - [ ] Live `.workflow/runs/<run-id>/` folders left in place, including other Teams' runs
 - [ ] Bound-Team detection ran; human chose a process document for this Team, or this session's existing bound Team config was kept and still resolves; no duplicate yaml for the same lead id
 - [ ] This Team's `.workflow/teams/<id>.yaml` exists with `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, and `harness` in that order and a readable `workflow` target that is a main workflow at the top level of `.workflow/workflows/`, never under `subflows/`; other Team yamls were preserved
+- [ ] Environment kind detected (Bot environment or Chat Session); a Chat Session selected a workflow with exactly one main agent, and a Chat Session used `team-lead` for both `team_lead_id` and `workflow_owner_id`
 - [ ] Sub-workflow files were copied with `workflows/`, every `## Sub-flows` path in a main workflow or sub-workflow resolves, every sub-workflow is reachable from a main workflow with no cycle, and no sub-workflow was offered as a Team's workflow
 - [ ] Role card `workflows/` directory pointers left unchanged
 - [ ] Standards Playbooks rewritten to `.workflow/project-standards/` after a New install or after `roles/` / `project-standards/` replace; no detection ask

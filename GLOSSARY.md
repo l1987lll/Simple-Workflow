@@ -49,11 +49,19 @@ The agent product a workflow runs on (for example Cursor or Claude Code).
 _Avoid_: runtime, platform, tool
 
 **Environment**:
-The tool surface a harness runs in for a workflow (for example local IDE chat or cloud agent). One harness can have several environments.
+The tool surface a harness runs in for a workflow (for example local IDE chat or cloud agent). One harness can have several environments. The project groups every environment into a **Bot environment** or a **Chat Session** for the main-agent limit.
 _Avoid_: setup, context, workspace
 
+**Bot environment**:
+An environment where a Role runs as a named bot and the Team can create or message other bots. A workflow in a Bot environment may have several main agents.
+_Avoid_: bot mode, multi-agent mode
+
+**Chat Session**:
+An environment where the agent runs inside one chat session. A workflow in a Chat Session has exactly one main agent; every other Role runs as a sub-agent.
+_Avoid_: chat mode, single-agent mode
+
 **Pair**:
-One harness plus one environment. A workflow may name more than one pair.
+One harness plus one environment. A workflow may name more than one pair. Every pair carries one environment kind, Bot or Chat Session.
 _Avoid_: target, profile, matrix
 
 **Interaction**:
@@ -96,12 +104,16 @@ _Avoid_: chat log, memory, scratch notes
 One agent playing a Role in a run (for example `developer#2`). A Role may have more than one instance in the same run when path ownership is disjoint.
 _Avoid_: clone, copy, duplicate Role
 
+**Main agent**:
+The session a human talks to in a workflow. A Chat Session runs exactly one; a Bot environment may run several.
+_Avoid_: lead agent, primary agent
+
 **Sub-agent**:
 An agent a main session starts on a Role card. It returns its result to the session that created it and cannot communicate with the human. Field names keep the `subagent-` spelling (`subagent-depth`, `subagent-peers`).
 _Avoid_: child agent, worker, helper
 
 **Role-bot group**:
-One set of Role bots for the same consumer `.workflow/` install, distinguished by a naming prefix (for example `T1` or `T2`). A Role-bot group is one kind of Team, typically on an all-main-agents harness. Groups share the same Role cards, process documents, and standards; each group has its own bots, its own Team config, and may use its own sidebar section.
+One set of Role bots for the same consumer `.workflow/` install, distinguished by a naming prefix (for example `T1` or `T2`). A Role-bot group is one kind of Team, typically on a Bot environment. Groups share the same Role cards, main workflows, and standards; each group has its own bots, its own Team config, and may use its own sidebar section.
 _Avoid_: team copy, second install (that would be another `.workflow/` tree), re-setup (that is updating the installed trees)
 
 **Team (workflow instance)**:
@@ -109,7 +121,7 @@ One agent team executing a main workflow (for example a Grok Role-bot group, or 
 _Avoid_: session (except as informal shorthand for a chat), install (that is the `.workflow/` tree)
 
 **Team config**:
-`.workflow/teams/<id>.yaml` for one Team (`id` = platform team-lead id or GUID; filename stem equals `id`; not short `t1`/`t2`). v1.1 fields in order: `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, `harness`. Agents read their bound Team config path, then the `workflow` main workflow named inside. The `workflow` field names a main workflow at the top level of `workflows/`, never a sub-workflow. If either is missing, stop. Team config is the only current-workflow pointer.
+`.workflow/teams/<id>.yaml` for one Team (`id` = platform team-lead id or GUID; filename stem equals `id`; not short `t1`/`t2`). v1.1 fields in order: `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, `harness`. Agents read their bound Team config path, then the `workflow` main workflow named inside. The `workflow` field names a main workflow at the top level of `workflows/`, never a sub-workflow. In a Chat Session, `workflow_owner_id` is the same single main session as `team_lead_id`. If either is missing, stop. Team config is the only current-workflow pointer.
 _Avoid_: process-document path written outside Team config, install (that is the `.workflow/` tree)
 
 **Handoff artifact**:

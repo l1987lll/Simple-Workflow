@@ -2,11 +2,7 @@
 
 End-to-end collaboration among Roles. Role-local craft stays on the Role card.
 
-Shape: four main agents talk to the human—`manager`, `team-lead`, `assistant`, and `workflow-owner`—and every other Role runs as a sub-agent of `team-lead`. `main-peers` is unsupported on both pairs, so two main agents never message each other; the human carries the brief (relay). A sub-agent cannot communicate with the human; it returns work to `team-lead`. Members never talk to each other; they go through `team-lead`.
-
-Levels: the human is level 1. `manager`, `assistant`, and `workflow-owner` are level 2 and do not manage each other. `team-lead` is level 3 and manages its own group. Expert groups are planned and have no Role cards yet; when their cards land they sit under `manager`, and a member attached to a team answers to that `team-lead`, while a member working alone tracks their own PR.
-
-Only `workflow-owner` writes the definition files under `.workflow/`—process documents, Role cards, run templates, Team configs, and project standards. Everyone reads and writes the live run folder `runs/<run-id>/`: members write their own handoff artifacts there and `team-lead` alone writes `STATUS.md`. Run artifacts are not definition changes. The `.workflow/` repository tracks definitions only; `runs/` is ignored, so run data never enters its history.
+Shape: **Chat Session**. One main agent, `team-lead`, talks to the human. Every other Role runs as a sub-agent of that session. A sub-agent cannot communicate with the human; it returns work to `team-lead`. Members never talk to each other; they go through `team-lead`. `main-peers` is not used because there is only one main agent.
 
 ## Targets
 
@@ -17,7 +13,7 @@ Only `workflow-owner` writes the definition files under `.workflow/`—process d
 
 ## Support
 
-Each cell is supported, unsupported, or uncertain, except subagent-depth, which is one, a number of further levels a sub-agent can create, or uncertain. Slash rows name the command.
+Each cell is supported, unsupported, or uncertain, except subagent-depth, which is one, a number of further levels a sub-agent can create, or uncertain. Slash rows name the command. This table covers every interaction the referenced sub-workflow uses.
 
 | Interaction | Cursor / Local IDE chat | DSH / Local IDE chat |
 |---|---|---|
@@ -38,21 +34,18 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 
 | Pair | Mode | Human at handoff | Shared repo |
 |---|---|---|---|
-| Cursor / Local IDE chat | May edit the repo; does not wait for approval; the main agent decides | Human is available through the main agents the human opened | yes |
-| DSH / Local IDE chat | May edit the repo; does not wait for approval; the main agent decides | Human is available through the main agents the human opened | yes |
+| Cursor / Local IDE chat | May edit the repo; does not wait for approval; the main agent decides | Human is available through `team-lead` only | yes |
+| DSH / Local IDE chat | May edit the repo; does not wait for approval; the main agent decides | Human is available through `team-lead` only | yes |
 
 ## Roles
 
-- `manager` — main agent; level 2; manages every `team-lead`: task assignment, people, priorities, status, and proposals to the human. Does not join the business work
-- `team-lead` — main agent; level 3; runs one task with its group and is the group's only channel
-- `assistant` — main agent; level 2; personal chores only, and hands project or business work back to the human
-- `workflow-owner` — main agent; level 2; the only writer of the `.workflow/` tree
-- `research-architect` — sub-agent of `team-lead`; opened only when research or architecture is needed
-- `ui-ux-designer` — sub-agent of `team-lead`; real interface design or interaction work
-- `developer` — sub-agent of `team-lead`; implements the agreed change
-- `code-reviewer` — sub-agent of `team-lead`; reviews the branch/PR
-- `qa` — sub-agent of `team-lead`; verifies the change
-- `closer` — sub-agent of `team-lead`; cleans up and drives close-out after acceptance
+- `team-lead` — main agent; runs one task with its group and is the group's only channel to the human
+- `research-architect` — sub-agent; opened only when research or architecture is needed
+- `ui-ux-designer` — sub-agent; real interface design or interaction work
+- `developer` — sub-agent; implements the agreed change
+- `code-reviewer` — sub-agent; reviews the branch/PR
+- `qa` — sub-agent; verifies the change
+- `closer` — sub-agent; cleans up and drives close-out after acceptance
 
 ## Sub-flows
 
@@ -62,38 +55,15 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 
 ## Flow
 
-1. The human talks with `team-lead` about the task. Rarely `manager` takes the task from the human and passes it on: `manager` → `team-lead` is relay, so the human carries the brief.
+1. Human talks with `team-lead` until the ask is clear.
 2. `team-lead` runs the [team loop](subflows/team-loop.md) for the business work: assignment, research, design, implementation, review, PR tracking, QA, close-out, and `/retro`.
-3. A `.workflow/` change goes only to `workflow-owner`, with no approval chain. Any Role may send it: a member sends it to `team-lead`, the only channel a sub-agent has; `team-lead`, `assistant`, and `manager` carry it to `workflow-owner` through the human, because two main agents cannot message each other here. The human may open `workflow-owner` directly. `workflow-owner` confirms with the human (gate) before writing, then commits the change in the `.workflow/` repository.
+3. `team-lead` reports close-out to the human.
 4. Parallel members are allowed when `team-lead` starts independent slices that do not edit the same files.
 5. `team-lead` may run several `developer` instances in parallel (`developer#1`, `developer#2`, …) when `STATUS.md` records disjoint path ownership for each instance; otherwise serialize.
 
 ## Routes
 
-### `manager` handoff
-
-| When | Next | Interaction |
-|---|---|---|
-| The instruction is settled and every affected Role holds a current brief | `team-lead` | relay + artifact |
-| Priorities or owners changed and each affected Role has the new brief | `team-lead` | relay + artifact |
-| The human asked for status and the answer is assembled | human | relay |
-| The human asked for a `.workflow/` change | `workflow-owner` | relay + artifact |
-| The human must decide before anyone continues | human | gate + relay |
-
-### `manager` when stuck
-
-| When | Raise to | Interaction |
-|---|---|---|
-| The human's instruction conflicts with an earlier decision and they have not said which wins | human | gate + relay |
-| Two Roles claim the same work and ownership cannot be split | human | gate + relay |
-| A Role is blocked on something outside every Role's authority | human | gate + relay |
-| No one can state the current priority | human | gate + relay |
-
-### `team-lead` handoff
-
-| When | Next | Interaction |
-|---|---|---|
-| A member needs a `.workflow/` change | human, then `workflow-owner` | relay |
+All business Role handoff routes are in the [team loop](subflows/team-loop.md); each Role's When-stuck route stays here.
 
 ### `team-lead` when stuck
 
@@ -103,43 +73,6 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 | The next move needs deep research or architecture beyond coordination | `research-architect` | spawn |
 | Two members disagree and this Role cannot resolve it | human | gate + relay |
 | Process or priority trade-off needs an explicit human call | human | gate + relay |
-
-### `assistant` handoff
-
-| When | Next | Interaction |
-|---|---|---|
-| The personal chore is done and the result is reported | human | relay |
-| The request turned out to be project or business work | human, who takes it to `manager` or `team-lead` | relay |
-| The request is a `.workflow/` change | `workflow-owner` | relay + artifact |
-| The chore needs a decision only the human can make | human | gate |
-
-### `assistant` when stuck
-
-| When | Raise to | Interaction |
-|---|---|---|
-| The ask stays ambiguous after one clarifying question | human | gate |
-| The chore needs access, credentials, or a tool the harness does not give | human | gate |
-| A step would change the machine or data in a way that is hard to undo and the human has not agreed | human | gate |
-| The request is project or business work and no owner Role can take it | human | gate + relay |
-
-### `workflow-owner` handoff
-
-| When | Next | Interaction |
-|---|---|---|
-| The requested change is written, committed, and re-read | human | relay |
-| An audit found drift and the proposal is ready for the human to confirm | human | gate + relay |
-| The change came from `manager` or `assistant` and is ready for them | that Role | relay + artifact |
-| A change spans several documents and the batch is written and reported | human | relay |
-
-### `workflow-owner` when stuck
-
-| When | Raise to | Interaction |
-|---|---|---|
-| The requested change contradicts a documented route and the human has not said which wins | human | gate |
-| A route needs an interaction the named pair does not support and no fallback exists | human | gate |
-| The change would need a Role card shape the role-definition standard rejects | human | gate |
-| A `teams/*.yaml` points at a process document that is missing or unreadable | human | gate |
-| Git is available but the `.workflow/` repository cannot take a commit | human | gate |
 
 ### `research-architect` when stuck
 
@@ -199,7 +132,7 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 
 ## Run state and artifacts
 
-One **run** is one team execution of this process document (intake through close-out). Several runs may be active at once. A run belongs to one group under one `team-lead`; `manager` may track several runs but writes none of them.
+One **run** is one team execution of this workflow (intake through close-out). Several runs may be active at once. A run belongs to one group under one `team-lead`. This workflow runs in a Chat Session, so `team-lead` is the only main agent.
 
 Handoff artifacts: a short message is handed over directly in the message. Anything long or detailed goes into a file under the run folder, and the handoff carries the file path.
 
@@ -247,7 +180,7 @@ runs/<run-id>/
   dev/<instance-id>/
 ```
 
-The next Role reads only paths listed in `STATUS.md` (and the brief). `.workflow/` changes live in the `.workflow/` repository, not in a run folder.
+The next Role reads only paths listed in `STATUS.md` (and the brief).
 
 ## Caveats
 

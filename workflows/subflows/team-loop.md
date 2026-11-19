@@ -1,6 +1,6 @@
 # Team loop
 
-The team's business loop from assignment through close-out. It covers the seven business Roles: Team Lead, Research Architect, UI/UX Designer, Developer, Code Reviewer, QA, and Closer. The main workflow that reaches this sub-workflow keeps `manager`, `assistant`, and `workflow-owner` outside the loop and owns pairs, support labels, conditions, run state, and caveats; this file owns the business Role order, handoffs, human gates, loops, and exit.
+The team's business loop from assignment through close-out. It covers the seven business Roles: Team Lead, Research Architect, UI/UX Designer, Developer, Code Reviewer, QA, and Closer. The main workflow that reaches this sub-workflow owns pairs, support labels, conditions, run state, and caveats; it may keep Roles outside the business loop (in a Bot environment, `manager`, `assistant`, and `workflow-owner`). In a Chat Session, this loop covers the whole workflow. This file owns the business Role order, handoffs, human gates, loops, and exit.
 
 ## Entry
 
