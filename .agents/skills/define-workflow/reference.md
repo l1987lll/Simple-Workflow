@@ -6,7 +6,7 @@ Read before classifying support or writing the process document. Vocabulary matc
 
 | Place | Belongs |
 |---|---|
-| `workflows/*.md` (main workflow) | Pairs, support labels, conditions (mode, human at handoff, shared repo), which Roles participate, end-to-end flow, a `## Sub-flows` table, who receives each handoff and When-stuck raise, the interaction used, how a run records STATUS and handoff artifacts, caveats |
+| `workflows/*.md` (main workflow) | Shape line with the environment kind and main agents, pairs, support labels, conditions (mode, human at handoff, shared repo), which Roles participate, end-to-end flow, a `## Sub-flows` table, who receives each handoff and When-stuck raise, the interaction used, how a run records STATUS and handoff artifacts, caveats |
 | `workflows/subflows/*.md` (sub-workflow) | A reusable process fragment: Roles, entry, its nested `## Sub-flows`, Flow, handoff Routes, exit, interactions used, artifacts. No pairs, support labels, conditions, run state, or caveats |
 | Role card | When this Role hands off or is stuck; how this Role does its craft |
 | `roles/` | Role cards, created by `define-role` |
@@ -33,6 +33,16 @@ The Roles section, the route tables, and the Flow are one set: every listed Role
 - A main workflow's Support table covers every interaction its referenced sub-workflows use, directly or through a nested sub-workflow. A sub-workflow route may use an interaction the main marks unsupported or uncertain only when that main records the matching caveat.
 - A Role's handoff table lives in the file that owns the hop: the main workflow, or one referenced sub-workflow. The When-stuck table for that Role stays in the main workflow.
 - A sub-workflow does not choose main agent or sub-agent. The main workflows that reach it decide participation and carry the interactions.
+
+## Environment kind
+
+Every pair is a **Bot environment** or a **Chat Session**.
+
+- **Chat Session:** one chat session with no named bots. A workflow has exactly one main agent; every other Role is a sub-agent.
+- **Bot environment:** the session can create or message named bots. A workflow may have several main agents.
+- Determine the kind from the runtime: a bot identity and bot creation or messaging means Bot; a single chat session with only sub-agents means Chat Session. Ask once when the runtime does not settle it.
+- Record the kind in the main workflow's Shape paragraph as `Shape: **Chat Session**` or `Shape: **Bot environment**`. Offer a multi-main shape only when every chosen pair is a Bot environment.
+- The `main-peers` interaction covers main agents messaging each other; it never overrides the Chat Session limit.
 
 ## Session identity
 

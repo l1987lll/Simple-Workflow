@@ -24,6 +24,8 @@ Provide a project skill `define-workflow` that interviews the human and creates 
 | Invocation | Model-invoked: the always-loaded `description` names both create and revise |
 | Interaction names | This skill's catalog. Not words every agent already has. Say that in the human's language. |
 | Support labels | `supported`, `unsupported`, or `uncertain`. A label belongs to one pair |
+| Environment kind | Every pair is a Bot environment or a Chat Session. A Chat Session allows exactly one main agent; a Bot environment allows several. Record the kind in the Shape paragraph |
+| Main-agent limit | A shape with more than one main agent is offered only when every chosen pair is a Bot environment. A Chat Session shape has exactly one main agent |
 | `subagent-depth` | `none`, a number of further levels, or `uncertain`. Do not say "depth" as a substitute field name; the field is `subagent-depth` |
 | Sub-agent and the human | Standing rule, not detected: a sub-agent cannot communicate with the human. The human talks only with the main session they opened. The sub-agent returns its result to that session |
 | Human-only slash | Do not keep an agent-invoked slash the Role cannot run. The coordinating main Role (usually `team-lead`) reminds the human to run it (`gate` + `relay`) |
@@ -100,6 +102,8 @@ Environment list, shown once. The human assigns numbers per harness. More than o
 2. Local CLI — the session is a terminal on the human's machine
 3. Cloud agent — the agent runs remotely, not in the local editor or terminal
 
+Classify each pair as a **Bot environment** or a **Chat Session**. A Chat Session is one chat session with no named bots; a Bot environment can create or message named bots. If the runtime does not settle it, ask once. Done when every pair has a kind.
+
 ### 2. Support
 
 **This session.** Settle the pair with the session-identity test in `reference.md` (product name in the instructions; environment is where the session is attached, not where the model is hosted). Label the catalog from tools present now. Record `subagent-depth`, sub-agent peers, and `main-peers`.
@@ -138,7 +142,7 @@ For a sub-workflow, the offer is the reusable process fragment: Roles, entry, ne
 
 Draft from the chosen cards' Handoffs and When stuck, including `PLAYBOOK.md` or the Playbook region. Who is next is this file; when work leaves stays on the Role card.
 
-Each option states, per Role, main agent or sub-agent. A sub-agent cannot talk with the human and returns to the main session that created it. A sub-agent spawns only when every pair's `subagent-depth` allows that level. Two sub-agents communicate only when every pair's peers label is supported. Two main sessions communicate only when every pair's `main-peers` is supported; otherwise the human uses relay. Fewer main agents is less human participation.
+Each option states, per Role, main agent or sub-agent. A sub-agent cannot talk with the human and returns to the main session that created it. A sub-agent spawns only when every pair's `subagent-depth` allows that level. Two sub-agents communicate only when every pair's peers label is supported. Two main sessions communicate only when every pair's `main-peers` is supported; otherwise the human uses relay. Fewer main agents is less human participation. If any pair is a Chat Session, exactly one Role instance is a main agent; a Bot environment may have several. Do not offer a multi-main shape to a Chat Session.
 
 When several shapes fit, number at most three. A shape supported on every pair comes before one that needs an unsupported or uncertain interaction, and that later shape names the pair, the interaction, and the label. Among equally feasible shapes, relay only for a human decision comes before relay on every hop.
 
@@ -171,7 +175,7 @@ Always run after create and after revise; do not skip because only one section c
 
 Walk the accepted workflow once. A failure is discussed: name the pair, the route, and the problem. The human drops it, switches it, keeps a caveat, or adds a sentence that states the constraint. Checks 2–4 and 6–8 apply to a main workflow. For a sub-workflow, check every interaction it uses against the Support table of each main workflow that reaches it.
 
-1. Catalog — existing slugs; catalog interactions only; unsupported or uncertain uses are caveats kept this run. A sub-workflow's interactions are supported on every pair of each reaching main, or that main keeps a caveat
+1. Catalog — existing slugs; catalog interactions only; unsupported or uncertain uses are caveats kept this run. A sub-workflow's interactions are supported on every pair of each reaching main, or that main keeps a caveat. The main-agent count fits every pair: exactly one in a Chat Session, one or more in a Bot environment
 2. Mode — each pair records whether this run may edit and whether it waits for approval
 3. Attendant — a human is available at each relay or gate
 4. Shared repo — the next Role can read an artifact route's files
@@ -209,7 +213,7 @@ Recorded beside the catalog, not as extra interactions the human must memorize a
 
 ## Process document sections
 
-From `templates/workflow.md`: Targets, Support, Conditions (mode, human at handoff, shared repo), Roles, Sub-flows, Flow, Routes (handoff and when stuck per slug), Run state and artifacts, Caveats.
+From `templates/workflow.md`: Shape (environment kind and main agents), Targets, Support, Conditions (mode, human at handoff, shared repo), Roles, Sub-flows, Flow, Routes (handoff and when stuck per slug), Run state and artifacts, Caveats.
 
 From `templates/subflow.md`: Entry, Roles, Sub-flows, Flow, Routes (handoff per routed slug), Exit, Interactions used, Artifacts.
 

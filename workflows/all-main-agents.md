@@ -2,7 +2,7 @@
 
 End-to-end collaboration among Roles. Role-local craft stays on the Role card.
 
-Shape: every Role is a main bot. `manager`, `team-lead`, `assistant`, and `workflow-owner` are the bots the human opens; the rest are group members. `main-peers` is supported on both pairs, so the four bots message each other directly. Members never message each other; they go through `team-lead`. `team-lead` never messages another `team-lead`; `manager` carries that.
+Shape: **Bot environment**. Every Role is a main bot; a Bot environment may have several main agents. `manager`, `team-lead`, `assistant`, and `workflow-owner` are the bots the human opens; the rest are group members. `main-peers` is supported on both pairs, so the four bots message each other directly. Members never message each other; they go through `team-lead`. `team-lead` never messages another `team-lead`; `manager` carries that.
 
 Levels: the human is level 1. `manager`, `assistant`, and `workflow-owner` are level 2 and do not manage each other. `team-lead` is level 3 and manages its own group. Expert groups are planned and have no Role cards yet; when their cards land they sit under `manager`, and a member attached to a team answers to that `team-lead`, while a member working alone tracks their own PR.
 

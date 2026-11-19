@@ -8,7 +8,8 @@ Copy this folder to `runs/<run-id>/` and fill in the fields. Only `team-lead` up
 |---|---|
 | run-id | |
 | title | |
-| process document | e.g. `workflows/main-with-subagents.md` |
+| environment kind | Bot or Chat Session |
+| main workflow | e.g. `workflows/main-with-subagents.md` |
 | work branch / worktree | |
 | overall phase | e.g. `intake` / `in_progress` / `closeout` / `done` |
 | brief | `brief.md` |

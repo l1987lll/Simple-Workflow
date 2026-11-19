@@ -2,6 +2,8 @@
 
 End-to-end collaboration among Roles. Role-local craft stays on the Role card.
 
+Shape: {{SHAPE}}
+
 ## Targets
 
 | Harness | Environment |

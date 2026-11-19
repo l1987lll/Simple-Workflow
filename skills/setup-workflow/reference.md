@@ -116,9 +116,23 @@ Before asking the intent, report:
 - The workflow-owner from [Find the workflow-owner](#find-the-workflow-owner), or that none was found
 - Whether Playbooks already require `.workflow/project-standards/` paths
 
+## Environment kind
+
+The project supports two environment kinds:
+
+- **Bot environment** — the session has a bot identity and can create or message named bots. A workflow may have several main agents.
+- **Chat Session** — one chat session with no named bots. A workflow has exactly one main agent; every other Role is a sub-agent.
+
+Detect the kind from the runtime before Choose workflow. If the runtime does not settle it, ask the human once. Record it for this run.
+
+- A Chat Session may choose only a main workflow whose `## Roles` section names exactly one main agent.
+- A Bot environment may choose any main workflow; state the main-agent count when listing choices.
+- A Chat Session has no separate `workflow-owner` main agent. `team-lead` is both lead and owner, so write the same id in `team_lead_id` and `workflow_owner_id`.
+- A kept Team config whose workflow breaks the Chat Session limit fails Check; ask the human to choose a different workflow.
+
 ## Find the workflow-owner
 
-The `workflow-owner` runs setup and holds the `.workflow/` write permission for its Team. When asking the human to choose one, say it is the Role dedicated to maintaining the workflow. Resolve one before any write.
+The `workflow-owner` runs setup and holds the `.workflow/` write permission for its Team. When asking the human to choose one, say it is the Role dedicated to maintaining the workflow. Resolve one before any write. In a **Chat Session**, there is no separate `workflow-owner`: `team-lead` is the single main agent and is both lead and owner; use the same id for `team_lead_id` and `workflow_owner_id`.
 
 Order:
 
@@ -127,7 +141,7 @@ Order:
 3. **A visible bot or agent.** When a bot or agent for this install is known to play `workflow-owner` (its name, profile, or standing instructions say so), name it and ask the human to confirm it is the owner.
 4. **Ask the human** (human action): the current session becomes `workflow-owner`, an existing bot becomes it, or a new one is created.
 
-On a first install, only rule 4 applies. Designate the owner and adopt the Role from the kit's `roles/workflow-owner/ROLE.md` after Find kit, because the installed card does not exist yet. When the shared install is present, adopt from `.workflow/roles/workflow-owner/ROLE.md` during Detect install and owner. Adopting means the session carries the Role and its maintenance rules—write definitions only, commit every definition change—before setup writes anything. Initialize (step 10) binds the Team config path into the adopted owner; it does not adopt the Role again. When the human wants a new owner bot, create and adopt it when the platform allows, then stop and run setup from it. When the owner is a bot whose platform id is unknown, generate one GUID and say the human must remember it.
+On a first install, only rule 4 applies outside a Chat Session. In a Chat Session, the single `team-lead` session is the owner and adopts `roles/team-lead/ROLE.md`; there is no `workflow-owner` card to adopt. Outside a Chat Session, designate the owner and adopt the Role from the kit's `roles/workflow-owner/ROLE.md` after Find kit, because the installed card does not exist yet. When the shared install is present, adopt from `.workflow/roles/workflow-owner/ROLE.md` during Detect install and owner. Adopting means the session carries the Role and its maintenance rules—write definitions only, commit every definition change—before setup writes anything. Initialize (step 10) binds the Team config path into the adopted owner; it does not adopt the Role again. When the human wants a new owner bot, create and adopt it when the platform allows, then stop and run setup from it. When the owner is a bot whose platform id is unknown, generate one GUID and say the human must remember it.
 
 Write the resolved id into `workflow_owner_id` of this Team's config at Write team config; Initialize (step 10) then binds that path into the adopted owner's instructions. When the owner is the same session as the lead, write the same id in `team_lead_id` and `workflow_owner_id`, and say so.
 
@@ -324,9 +338,9 @@ Walk this session's selected main workflow (from its bound Team config `workflow
 Start at `team-lead` intake and follow every Flow step and every Routes table row (handoffs and When stuck) until close-out.
 
 1. **Roles.** Every slug the document names exists as `.workflow/roles/<slug>/ROLE.md`. A Role-Playbook card also has `PLAYBOOK.md`.
-2. **Team configs.** Every expected Team config under `.workflow/teams/` exists, parses as YAML, and has `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, and `harness` in that order (`id` matches the filename stem). Each `workflow` target is a main workflow at the top level of `.workflow/workflows/`, exists, and is readable; a target under `subflows/` fails. Resolve this session's bound config with [Detect this session's bound Team config](#detect-this-sessions-bound-team-config); that config must be present and valid — failure of that config fails the check. Fail if more than one `teams/*.yaml` matches the same lead id. Bound lead and owner instructions, when this session can see them, must cite the matching config path.
+2. **Team configs.** Every expected Team config under `.workflow/teams/` exists, parses as YAML, and has `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, and `harness` in that order (`id` matches the filename stem). Each `workflow` target is a main workflow at the top level of `.workflow/workflows/`, exists, and is readable; a target under `subflows/` fails. The workflow's `## Roles` section must fit this session's environment kind: a Chat Session has exactly one main agent; a Bot environment may have several. In a Chat Session, `team_lead_id` and `workflow_owner_id` name the same single main session. Resolve this session's bound config with [Detect this session's bound Team config](#detect-this-sessions-bound-team-config); that config must be present and valid — failure of that config fails the check. Fail if more than one `teams/*.yaml` matches the same lead id. Bound lead and owner instructions, when this session can see them, must cite the matching config path.
 3. **Shared trees.** `roles/`, `workflows/`, and `project-standards/` exist once. No second copy of them sits beside `.workflow/` for another harness.
-4. **Document shape.** Each main workflow has Targets, Support, Roles, Sub-flows, Flow, Routes (handoff and When-stuck tables for each listed Role, except a handoff owned by a referenced sub-workflow), Run state and artifacts, and Caveats. Each referenced sub-workflow has Entry, Roles, Sub-flows, Flow, Routes, Exit, Interactions used, and Artifacts, and carries no pairs, support, conditions, run state, or caveats.
+4. **Document shape.** Each main workflow has a Shape line naming the environment kind and its main agents, Targets, Support, Roles, Sub-flows, Flow, Routes (handoff and When-stuck tables for each listed Role, except a handoff owned by a referenced sub-workflow), Run state and artifacts, and Caveats. Each referenced sub-workflow has Entry, Roles, Sub-flows, Flow, Routes, Exit, Interactions used, and Artifacts, and carries no pairs, support, conditions, run state, or caveats.
 5. **Hops.** Each route's Next is a listed slug or `human`. The interaction is one the document's Support table names. A spawn hop fits a shape where a lead starts sub-agents. A message hop between main agents fits an all-main-agents shape when `main-peers` is supported; where it is unsupported, the route uses relay. An unsupported or uncertain interaction is acceptable only as a caveat already recorded in the document. Walk every route in each referenced sub-workflow, and in each sub-workflow it nests, as if inserted at the invocation point in the main workflow's Flow. Every `## Sub-flows` path in a main workflow or sub-workflow resolves under `.workflow/workflows/subflows/`; every sub-workflow is reachable from a main workflow; the reference graph has no cycles.
 6. **Gates and relay.** Every `gate` or `relay` hop reaches the human through a main agent the human opened — the lead, or another main Role the document names. Human-only slash commands are reminded by the main agent that talks to the human. `/retro` follows the document: where `slash /retro` is supported and the document allows it, members run it after a human gate; elsewhere the human runs it and a recorded caveat is acceptable.
 7. **Artifacts and run template.** `.workflow/runs/_template/STATUS.md` and `.workflow/runs/_template/brief.md` exist. Relative links from the process document to `../runs/_template/` resolve to that folder. The document states the STATUS path, the single writer (the lead), per-instance rows, artifact layout, and disjoint path ownership when `parallel` is used. A live run folder is created under `.workflow/runs/<run-id>/`.

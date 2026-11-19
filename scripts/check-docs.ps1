@@ -145,6 +145,25 @@ if (Test-Path $workflowsRoot) {
     foreach ($document in $workflowDocuments) {
         $rel = $document.File.FullName.Substring($root.Length + 1) -replace '\\', '/'
         $text = [System.IO.File]::ReadAllText($document.File.FullName)
+        if ($document.Kind -eq 'main') {
+            $rolesSection = [regex]::Match($text, '(?ms)^##\s+Roles\s*$(.*?)(?=^##\s+|\z)')
+            $mainCount = 0
+            if ($rolesSection.Success) {
+                $mainCount = [regex]::Matches($rolesSection.Groups[1].Value, '(?m)^-\s+`[^`]+`\s+—\s+main (?:agent|bot)\b').Count
+            }
+            $kind = $null
+            if ($text -match 'Shape:\s*\*\*Chat Session\*\*') { $kind = 'chat' }
+            elseif ($text -match 'Shape:\s*\*\*Bot environment\*\*') { $kind = 'bot' }
+            if (-not $kind) {
+                $errors.Add("${rel}: Shape line must name Bot environment or Chat Session")
+            }
+            elseif ($kind -eq 'chat' -and $mainCount -ne 1) {
+                $errors.Add("${rel}: Chat Session must have exactly one main agent (found $mainCount)")
+            }
+            elseif ($kind -eq 'bot' -and $mainCount -lt 1) {
+                $errors.Add("${rel}: Bot environment must have at least one main agent")
+            }
+        }
         $section = [regex]::Match($text, '(?ms)^##\s+Sub-flows\s*$(.*?)(?=^##\s+|\z)')
         if (-not $section.Success) {
             if ($document.Kind -eq 'main') {
