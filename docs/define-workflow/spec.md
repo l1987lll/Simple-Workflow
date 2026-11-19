@@ -5,18 +5,20 @@ Status: approved
 
 ## Intent
 
-Provide a project skill `define-workflow` that interviews the human and creates or revises a **process document** under `workflows/`. The document states how existing Roles collaborate, which harness and environment pairs it runs on, and how a live run records status and handoff artifacts. Role cards stay local. This spec covers the skill only—not the contents of a particular process document.
+Provide a project skill `define-workflow` that interviews the human and creates or revises a **main workflow** under `workflows/` or a **sub-workflow** under `workflows/subflows/`. The main workflow states how existing Roles collaborate, which harness and environment pairs it runs on, and how a live run records status and handoff artifacts. A sub-workflow states a reusable process fragment and is reachable from at least one main workflow through `## Sub-flows` tables. Role cards stay local. This spec covers the skill only—not the contents of a particular process document.
 
 ## Decisions
 
 | Decision | Choice |
 |---|---|
-| Artifact | One Markdown process document per workflow shape (not a Cursor Agent binding) |
+| Artifact | One Markdown process document per workflow shape; a sub-workflow is a reusable fragment referenced through `## Sub-flows` tables |
+| Workflow kinds | A main workflow at `workflows/*.md` owns pairs, support labels, conditions, run state, and caveats. A sub-workflow at `workflows/subflows/*.md` owns a reusable process fragment: Roles, entry, nested `## Sub-flows`, Flow, handoff Routes, exit, interactions used, artifacts |
+| Sub-workflow reference | Every sub-workflow is reachable from at least one main workflow through `## Sub-flows` tables. A sub-workflow may reference another sub-workflow, with no cycles. No Team config names a sub-workflow |
 | Skill location | `skills/define-workflow/` in this repo |
 | Skill mirror | Byte-identical copy under `.agents/skills/define-workflow/` |
 | Packaging | Skill + `reference.md` + templates (no scaffold script) |
 | Prerequisite | At least one Role card under `roles/`. Otherwise stop and point at `define-role` |
-| Output directory | `workflows/`. Default first file: `workflows/workflow.md`. Another name only when the human names it. Several workflows are several files. Do not merge them unless asked. Do not write a new process document at repo root |
+| Output directory | `workflows/` for a main workflow; `workflows/subflows/` for a sub-workflow. Default first main file: `workflows/workflow.md`. Another name only when the human names it. Several main workflows are several files. Do not merge them unless asked. Do not write a new process document at repo root |
 | Legacy files | Gate also lists repo-root `workflow.md` and `workflow-*.md` if present, and may move a revised file into `workflows/` on write |
 | Doc language | English in the process document. Interview in the human's language (often Chinese). A few ask-lines are fixed Chinese |
 | Invocation | Model-invoked: the always-loaded `description` names both create and revise |
@@ -26,20 +28,24 @@ Provide a project skill `define-workflow` that interviews the human and creates 
 | Sub-agent and the human | Standing rule, not detected: a sub-agent cannot communicate with the human. The human talks only with the main session they opened. The sub-agent returns its result to that session |
 | Human-only slash | Do not keep an agent-invoked slash the Role cannot run. The coordinating main Role (usually `team-lead`) reminds the human to run it (`gate` + `relay`) |
 | Offer order | At most three options. Feasible on every pair first. Among those, less human participation first. `relay` on every hop, and `gate`, count as more human participation |
-| Offer grain | Runnable rows, not a sketch. Columns: When, Interaction, Next, what is handed. Every Handoff and When stuck bullet of each participating Role. Each Role instance marked main agent or sub-agent |
-| Run record | Chat history is not the source of truth across agents. Default: `runs/<run-id>/STATUS.md`, single writer is the coordinating main Role |
-| Roles in the workflow | Settled on both create and revise. Create picks from the cards; revise keeps, adds, or removes. An added Role gets both route tables; a removed Role loses them and its Flow mentions; the Flow is renumbered and confirmed with the human |
+| Offer grain | Runnable rows, not a sketch. Columns: When, Interaction, Next, what is handed. Every Handoff and When stuck bullet of each participating Role, except a handoff owned by a referenced sub-workflow. Each Role instance marked main agent or sub-agent. A sub-workflow offer covers only the handoffs of the Roles it routes |
+| Run record | Chat history is not the source of truth across agents. Default: `runs/<run-id>/STATUS.md`, single writer is the coordinating main Role. A sub-workflow carries no run record; it uses the run state of every main workflow that reaches it |
+| Roles in the workflow | Settled on both create and revise. Create picks from the cards; revise keeps, adds, or removes. An added Role gets both route tables; a removed Role loses them and its Flow mentions; the Flow is renumbered and confirmed with the human. A sub-workflow Role gets a handoff table and no when-stuck table |
 
 ## Repository layout
 
 ```
 workflows/                      # process documents (may be absent until the skill runs)
-  workflow.md                   # default name for a first create
+  workflow.md                   # default name for a first main create
+  subflows/
+    team-loop.md                # a sub-workflow referenced by main workflows
+    review-loop.md              # a sub-workflow nested under team-loop
 docs/define-workflow/spec.md
 skills/define-workflow/         # source of truth
   SKILL.md
   reference.md
   templates/workflow.md
+  templates/subflow.md
   templates/support-prompt.md
 .agents/skills/define-workflow/ # byte-identical mirror
 ```
@@ -61,13 +67,17 @@ Say the step name, then explain in 1–2 sentences, then ask. Chinese names:
 
 Create versus revise is not its own announced name. It opens Choose workflow.
 
+For a sub-workflow, skip steps 1, 2, and 5. The main workflows that reach it own pairs, support, conditions, and run state. Go from Gate to Roles (step 3), then Choose workflow (step 4).
+
 ## Gate
 
-List every `roles/*/ROLE.md` (slug and one-line purpose) and every process document already found. For each process document, path plus a one-line shape summary from its opening.
+List every `roles/*/ROLE.md` (slug and one-line purpose) and every main workflow (`workflows/*.md`) and sub-workflow (`workflows/subflows/*.md`) already found. For each process document, path plus a one-line shape summary from its opening.
 
 If at least one process document exists and the invoke did not already say create versus which file to revise, ask before any later step, in these words:
 
 These workflows are already in the repo. Is this run revising one of them (which path), or creating a new one?
+
+When the run creates, ask whether it is a main workflow or a sub-workflow; for a sub-workflow, ask which workflow references it (a main workflow, or a sub-workflow that is itself reachable from a main). A sub-workflow needs a path to a main workflow; when no main workflow exists, a create is a main workflow.
 
 ## Interview (ordered)
 
@@ -114,15 +124,17 @@ A missing line is `uncertain`. After each result, say that pair's unsupported an
 
 Ask which Roles take part before offering shapes. Create: list every card with its one-line purpose and ask which take part. Revise: show the Roles in the file, the cards that are not in it, and the route tables each current Role has; ask what to keep, add, or remove.
 
-Apply the answer: a kept Role keeps its Roles line and both route tables; an added Role gets a Roles line and both tables built from its card; a removed Role loses its Roles line, both route tables, and every Flow mention, and any route that named it is re-pointed or the removal is dropped. Renumber the Flow.
+Apply the answer: a kept Role keeps its Roles line and both route tables; an added Role gets a Roles line and both tables built from its card; a removed Role loses its Roles line, both route tables, and every Flow mention, and any route that named it is re-pointed or the removal is dropped. Renumber the Flow. A sub-workflow Role gets a handoff table and no when-stuck table; the main workflow keeps the when-stuck table.
 
 On a revise, show the adjusted Flow and every added or removed route, then ask the human to accept it. On a create, the Role set is confirmed and the Flow arrives with the accepted shape.
 
 ### 4. Workflows
 
-Revise: read the chosen file, restate caveats, ask what changes beyond Roles. Keeping the shape skips the menu. Steps 5–6 still run.
+Revise: read the chosen file, restate caveats, ask what changes beyond Roles. Keeping the shape skips the menu. Step 5 runs for a main workflow when run state changes or is missing; a sub-workflow skips it. Step 6 always runs.
 
-Create: default path `workflows/workflow.md` unless the human named another file under `workflows/`. Build the offer from the Roles chosen in step 3.
+Create: default path `workflows/workflow.md` for a main workflow, or `workflows/subflows/<slug>.md` for a sub-workflow, unless the human named another file in that directory. Build the offer from the Roles chosen in step 3.
+
+For a sub-workflow, the offer is the reusable process fragment: Roles, entry, nested sub-flows, Flow, handoffs, and exit. Add or update its row in the `## Sub-flows` table of every referencing workflow, main or sub-workflow. A sub-workflow may invoke a nested sub-workflow; offer that nested part the same way.
 
 Draft from the chosen cards' Handoffs and When stuck, including `PLAYBOOK.md` or the Playbook region. Who is next is this file; when work leaves stays on the Role card.
 
@@ -138,14 +150,16 @@ A number selects that option. Further text is the modifications. An unsupported 
 
 ### 5. Run state and artifacts
 
+Main workflow only. A sub-workflow skips this step; it uses the run state of every main workflow that reaches it.
+
 After acceptance. Chat history is not the source of truth across agents. Offer the default and ask the human to accept or name changes:
 
-- One run is one execution of the accepted workflow. Several runs may proceed at once.
+- One run is one execution of the accepted main workflow. Several runs may proceed at once.
 - `runs/<run-id>/STATUS.md` (or a path the human names). The coordinating main Role is the only writer.
 - One row per in-flight Role instance: slug, instance id, agent id when known, slice, path ownership, phase, artifact paths, waiting on.
 - Handoff artifacts under `runs/<run-id>/`. Product code stays on the work branch.
 - Parallel instances need disjoint path ownership before they edit.
-- Suggested folders: `brief.md`, `research/`, `review/`, `qa/`, `closeout/`, `dev/<instance-id>/`.
+- Suggested folders: `brief.md`, `research/`, `design/`, `review/`, `qa/`, `closeout/`, `dev/<instance-id>/`.
 
 Ask with these words:
 
@@ -155,20 +169,21 @@ This step is Run state and artifacts. Default: `runs/<run-id>/STATUS.md`, single
 
 Always run after create and after revise; do not skip because only one section changed.
 
-Walk the accepted workflow once. A failure is discussed: name the pair, the route, and the problem. The human drops it, switches it, keeps a caveat, or adds a sentence that states the constraint.
+Walk the accepted workflow once. A failure is discussed: name the pair, the route, and the problem. The human drops it, switches it, keeps a caveat, or adds a sentence that states the constraint. Checks 2–4 and 6–8 apply to a main workflow. For a sub-workflow, check every interaction it uses against the Support table of each main workflow that reaches it.
 
-1. Catalog — existing slugs; catalog interactions only; unsupported or uncertain uses are caveats kept this run
+1. Catalog — existing slugs; catalog interactions only; unsupported or uncertain uses are caveats kept this run. A sub-workflow's interactions are supported on every pair of each reaching main, or that main keeps a caveat
 2. Mode — each pair records whether this run may edit and whether it waits for approval
 3. Attendant — a human is available at each relay or gate
 4. Shared repo — the next Role can read an artifact route's files
 5. Caller — a slash the workflow has a Role run is invocable by that Role; a human-only command is reminded by the coordinating main Role
 6. Overlap — parallel states disjoint files or separate workspaces
 7. Craft tool — a tool named in a Role's Steps that a route depends on is confirmed per pair
-8. Run state — STATUS path, single writer, instance fields, artifact layout, path-ownership rule
+8. Run state — a main workflow states STATUS path, single writer, instance fields, artifact layout, and path-ownership rule; a sub-workflow carries no run-state section
+9. Sub-flows — every main workflow's and sub-workflow's `## Sub-flows` table lists each sub-workflow it invokes; each path resolves under `workflows/subflows/`; every sub-workflow is reachable from a main workflow; the reference graph has no cycles
 
 ### 7. Write and report
 
-Fill `templates/workflow.md`. English. One slash row per command; omit slash when the workflow calls none. One handoff table and one when-stuck table per slug. Caveats `(none)` when nothing was kept. Report the path. Leave Role cards unchanged.
+Fill the template for the file kind: `templates/workflow.md` for a main workflow, `templates/subflow.md` for a sub-workflow. English. A main workflow records pairs, labels, conditions, Roles, a `## Sub-flows` table, Flow, Routes, run state, and caveats. A sub-workflow records Roles, entry, its `## Sub-flows` table, Flow, handoff Routes, exit, interactions used, and artifacts. One slash row per command; omit slash when the workflow calls none. One handoff table per slug in the file that owns it; one When-stuck table per slug in the main workflow. Caveats `(none)` when nothing was kept. Add or update the sub-workflow's row in every referencing workflow's `## Sub-flows` table. Report the path or paths. Leave Role cards unchanged.
 
 ## Catalog
 
@@ -194,16 +209,18 @@ Recorded beside the catalog, not as extra interactions the human must memorize a
 
 ## Process document sections
 
-From `templates/workflow.md`: Targets, Support, Conditions (mode, human at handoff, shared repo), Roles, Flow, Routes (handoff and when stuck per slug), Run state and artifacts, Caveats.
+From `templates/workflow.md`: Targets, Support, Conditions (mode, human at handoff, shared repo), Roles, Sub-flows, Flow, Routes (handoff and when stuck per slug), Run state and artifacts, Caveats.
+
+From `templates/subflow.md`: Entry, Roles, Sub-flows, Flow, Routes (handoff per routed slug), Exit, Interactions used, Artifacts.
 
 ## SKILL.md behavior
 
 - `name`: `define-workflow`
 - `disable-model-invocation` omitted: the agent can fire the skill on its own, and other skills can reach it
-- Read `reference.md` for session identity, the this-session test, uncertain sentences, and offer shape
+- Read `reference.md` for session identity, the this-session test, uncertain sentences, offer shape, and main-versus-sub-workflow ownership
 - Read `docs/agent-docs.md` for how the process document must read; read each written file back before reporting
 - Read `templates/support-prompt.md` when another pair must be judged
-- Read `templates/workflow.md` when writing
+- Read `templates/workflow.md` for a main workflow and `templates/subflow.md` for a sub-workflow when writing
 - Completion criteria are the checklist at the end of `SKILL.md`
 
 ## Out of scope
@@ -213,7 +230,8 @@ From `templates/workflow.md`: Targets, Support, Conditions (mode, human at hando
 - Choosing product requirements, review findings, or QA results
 - Detecting whether a sub-agent can talk to the human (standing rule instead)
 - A support matrix hardcoded per harness (labels come from this session's tools or from a pasted result)
+- A Team config naming a sub-workflow as its current workflow
 
 ## Implementation approach
 
-Interview, then fill `templates/workflow.md` into `workflows/<name>.md`. No scaffold script.
+Interview, then fill the matching template into `workflows/<name>.md` for a main workflow or `workflows/subflows/<name>.md` for a sub-workflow. No scaffold script.

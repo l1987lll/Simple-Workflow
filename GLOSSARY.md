@@ -32,9 +32,17 @@ _Avoid_: Role-Detail, two-document layout, monolith, split
 Optional Role card shape: one `ROLE.md` with a stable upper section and a mutable lower section (same headings as a Playbook). Points at `workflows/`. English token is Role-merged.
 _Avoid_: Role-only, single-document layout, monolith
 
-**Process document** (`workflows/*.md`):
-End-to-end workflow and how Roles interact, including each pair's support for the interactions it uses. Lives under `workflows/`, outside Role cards. `define-workflow` creates and edits these files. `define-role` does not.
+**Process document**:
+A workflow document under `workflows/`. A main workflow lives at `workflows/*.md`; a sub-workflow lives at `workflows/subflows/*.md` and is reachable from a main workflow through `## Sub-flows` tables. `define-workflow` creates and edits both. `define-role` does not.
 _Avoid_: playbook, pipeline doc
+
+**Main workflow** (`workflows/*.md`):
+A complete process document that a Team selects as its current workflow. It states harness/environment pairs, support labels, conditions, Roles, Flow, Routes, run state, caveats, and every sub-workflow it invokes directly.
+_Avoid_: root workflow, parent flow, top-level document
+
+**Sub-workflow** (`workflows/subflows/*.md`):
+A reusable process fragment referenced from a `## Sub-flows` table. It may be referenced by one or more main workflows or by another sub-workflow. Every sub-workflow is reachable from a main workflow, and the reference graph has no cycles. It states Roles, entry, its own `## Sub-flows`, Flow, handoff Routes, exit, interactions used, and artifacts. It states no pairs, support labels, conditions, run state, or caveats; the main workflows that reach it own those.
+_Avoid_: sub-flow, subflow, child process, nested workflow
 
 **Harness**:
 The agent product a workflow runs on (for example Cursor or Claude Code).
@@ -69,15 +77,15 @@ The next Role can read the files this Role wrote.
 _Avoid_: workspace, checkout
 
 **Route**:
-Who receives a Role's handoff or When-stuck raise, and which interaction carries it. Written in the process document under `workflows/`.
+Who receives a Role's handoff or When-stuck raise, and which interaction carries it. Written in a main workflow or a sub-workflow under `workflows/`.
 _Avoid_: handoff (that is the Playbook section), transition, edge
 
 **Caveat**:
-A route kept in the process document under `workflows/` after the human was warned that an interaction is unsupported or uncertain on a named pair.
+A route kept after the human was warned that an interaction is unsupported or uncertain on a named pair. Recorded in the main workflow under `workflows/`, including when the route it covers comes from a referenced sub-workflow at any depth.
 _Avoid_: exception, waiver
 
 **Run**:
-One team execution of the process document, from intake through close-out. Several runs may be active at once.
+One team execution of a main workflow, from intake through close-out. Several runs may be active at once.
 _Avoid_: session, job (except as informal shorthand), ticket
 
 **Run state**:
@@ -97,11 +105,11 @@ One set of Role bots for the same consumer `.workflow/` install, distinguished b
 _Avoid_: team copy, second install (that would be another `.workflow/` tree), re-setup (that is updating the installed trees)
 
 **Team (workflow instance)**:
-One agent team executing a process document (for example a Grok Role-bot group, or a Cursor lead chat with sub-agents). Multiple Teams may share one `.workflow/` install. Not a run.
+One agent team executing a main workflow (for example a Grok Role-bot group, or a Cursor lead chat with sub-agents). Multiple Teams may share one `.workflow/` install. Not a run.
 _Avoid_: session (except as informal shorthand for a chat), install (that is the `.workflow/` tree)
 
 **Team config**:
-`.workflow/teams/<id>.yaml` for one Team (`id` = platform team-lead id or GUID; filename stem equals `id`; not short `t1`/`t2`). v1.1 fields in order: `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, `harness`. Agents read their bound Team config path, then the `workflow` process document named inside. If either is missing, stop. Team config is the only current-workflow pointer.
+`.workflow/teams/<id>.yaml` for one Team (`id` = platform team-lead id or GUID; filename stem equals `id`; not short `t1`/`t2`). v1.1 fields in order: `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, `harness`. Agents read their bound Team config path, then the `workflow` main workflow named inside. The `workflow` field names a main workflow at the top level of `workflows/`, never a sub-workflow. If either is missing, stop. Team config is the only current-workflow pointer.
 _Avoid_: process-document path written outside Team config, install (that is the `.workflow/` tree)
 
 **Handoff artifact**:

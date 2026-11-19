@@ -83,6 +83,149 @@ foreach ($file in $mdFiles) {
     }
 }
 
+# Process documents: main workflows at workflows/*.md, sub-workflows at workflows/subflows/*.md.
+# A main workflow owns pairs, support, conditions, and run state. A sub-workflow is reachable
+# from a main workflow through ## Sub-flows tables and carries no pair or run data.
+$workflowsRoot = Join-Path $root 'workflows'
+if (Test-Path $workflowsRoot) {
+    $mainWorkflowFiles = @(Get-ChildItem -Path $workflowsRoot -File -Filter *.md | Sort-Object FullName)
+    $subflowsRoot = Join-Path $workflowsRoot 'subflows'
+    $subflowFiles = @()
+    if (Test-Path $subflowsRoot) {
+        $subflowFiles = @(Get-ChildItem -Path $subflowsRoot -Recurse -File -Filter *.md | Sort-Object FullName)
+    }
+
+    $subflowHeadings = @('Entry', 'Roles', 'Sub-flows', 'Flow', 'Routes', 'Exit', 'Interactions used', 'Artifacts')
+    $subflowForbiddenHeadings = @('Targets', 'Support', 'Conditions', 'Run state and artifacts', 'Caveats')
+    foreach ($subflow in $subflowFiles) {
+        $rel = $subflow.FullName.Substring($root.Length + 1) -replace '\\', '/'
+        if ($subflow.DirectoryName -ne $subflowsRoot) {
+            $errors.Add("${rel}: sub-workflow must sit directly under workflows/subflows/")
+            continue
+        }
+        $text = [System.IO.File]::ReadAllText($subflow.FullName)
+        foreach ($heading in $subflowHeadings) {
+            if (-not [regex]::IsMatch($text, "(?m)^##\s+$([regex]::Escape($heading))\s*$")) {
+                $errors.Add("${rel}: missing heading ## $heading")
+            }
+        }
+        foreach ($heading in $subflowForbiddenHeadings) {
+            if ([regex]::IsMatch($text, "(?m)^##\s+$([regex]::Escape($heading))\s*$")) {
+                $errors.Add("${rel}: sub-workflow must not have ## $heading; the referencing main workflow owns it")
+            }
+        }
+        $rolesSection = [regex]::Match($text, '(?ms)^##\s+Roles\s*$(.*?)(?=^##\s+|\z)')
+        if ($rolesSection.Success) {
+            foreach ($slugMatch in [regex]::Matches($rolesSection.Groups[1].Value, '(?m)^-\s+`([a-z0-9][a-z0-9-]*)`')) {
+                $slug = $slugMatch.Groups[1].Value
+                if (-not (Test-Path (Join-Path $root "roles/$slug/ROLE.md"))) {
+                    $errors.Add("${rel}: Role slug not found under roles/: $slug")
+                }
+            }
+        }
+    }
+
+    $nestedDocuments = @(Get-ChildItem -Path $workflowsRoot -Recurse -File -Filter *.md | Where-Object { $_.DirectoryName -ne $workflowsRoot })
+    foreach ($file in $nestedDocuments) {
+        $rel = $file.FullName.Substring($root.Length + 1) -replace '\\', '/'
+        if ($rel -notmatch '^workflows/subflows/[^/]+\.md$') {
+            $errors.Add("${rel}: process documents belong at workflows/*.md or workflows/subflows/*.md")
+        }
+    }
+
+    # Build the ## Sub-flows graph from main workflows and sub-workflows.
+    $workflowDocuments = @()
+    foreach ($mainWorkflow in $mainWorkflowFiles) {
+        $workflowDocuments += [pscustomobject]@{ File = $mainWorkflow; Kind = 'main' }
+    }
+    foreach ($subflow in $subflowFiles) {
+        $workflowDocuments += [pscustomobject]@{ File = $subflow; Kind = 'sub-workflow' }
+    }
+    $workflowEdges = @{}
+    foreach ($document in $workflowDocuments) {
+        $rel = $document.File.FullName.Substring($root.Length + 1) -replace '\\', '/'
+        $text = [System.IO.File]::ReadAllText($document.File.FullName)
+        $section = [regex]::Match($text, '(?ms)^##\s+Sub-flows\s*$(.*?)(?=^##\s+|\z)')
+        if (-not $section.Success) {
+            if ($document.Kind -eq 'main') {
+                $errors.Add("${rel}: missing heading ## Sub-flows")
+            }
+            $workflowEdges[$document.File.FullName] = @()
+            continue
+        }
+        $sectionText = $section.Groups[1].Value
+        $links = [regex]::Matches($sectionText, '\[[^\]]*\]\(([^)]+)\)')
+        if ($links.Count -eq 0 -and $sectionText -notmatch '\(none\)') {
+            $errors.Add("${rel}: ## Sub-flows must list a sub-workflow or say (none)")
+        }
+        $targets = @()
+        foreach ($link in $links) {
+            $target = $link.Groups[1].Value.Trim()
+            if ($target -match '^(https?:|mailto:|#)') { continue }
+            $pathPart = ($target -split '#')[0]
+            if ([string]::IsNullOrWhiteSpace($pathPart)) { continue }
+            $resolved = [System.IO.Path]::GetFullPath((Join-Path $document.File.DirectoryName $pathPart))
+            $resolvedRel = [System.IO.Path]::GetRelativePath($root, $resolved) -replace '\\', '/'
+            if ($resolvedRel -notmatch '^workflows/subflows/[^/]+\.md$') {
+                $errors.Add("${rel}: Sub-flows entry is not a workflows/subflows/*.md file: $target")
+                continue
+            }
+            if (-not (Test-Path $resolved)) {
+                $errors.Add("${rel}: Sub-flows entry missing: $target")
+                continue
+            }
+            $targets += $resolved
+        }
+        $workflowEdges[$document.File.FullName] = @($targets)
+    }
+
+    # Every sub-workflow must be reachable from a main workflow.
+    $reachable = @{}
+    $queue = [System.Collections.Generic.Queue[string]]::new()
+    foreach ($mainWorkflow in $mainWorkflowFiles) {
+        $reachable[$mainWorkflow.FullName] = $true
+        $queue.Enqueue($mainWorkflow.FullName)
+    }
+    while ($queue.Count -gt 0) {
+        $current = $queue.Dequeue()
+        foreach ($next in $workflowEdges[$current]) {
+            if (-not $reachable.ContainsKey($next)) {
+                $reachable[$next] = $true
+                $queue.Enqueue($next)
+            }
+        }
+    }
+    foreach ($subflow in $subflowFiles) {
+        if (-not $reachable.ContainsKey($subflow.FullName)) {
+            $rel = $subflow.FullName.Substring($root.Length + 1) -replace '\\', '/'
+            $errors.Add("${rel}: sub-workflow is not reachable from any main workflow's ## Sub-flows tables")
+        }
+    }
+
+    # No cycles across Sub-flows edges.
+    $visitState = @{}
+    function Test-WorkflowCycle([string]$node) {
+        $visitState[$node] = 1
+        foreach ($next in $workflowEdges[$node]) {
+            if ($visitState[$next] -eq 1) { return $true }
+            if (-not $visitState.ContainsKey($next)) {
+                if (Test-WorkflowCycle $next) { return $true }
+            }
+        }
+        $visitState[$node] = 2
+        return $false
+    }
+    $cycleFound = $false
+    foreach ($document in $workflowDocuments) {
+        if (-not $visitState.ContainsKey($document.File.FullName)) {
+            if (Test-WorkflowCycle $document.File.FullName) { $cycleFound = $true; break }
+        }
+    }
+    if ($cycleFound) {
+        $errors.Add("workflows/: ## Sub-flows references contain a cycle")
+    }
+}
+
 $roleCount = 0
 $rolesRoot = Join-Path $root 'roles'
 if (Test-Path $rolesRoot) {

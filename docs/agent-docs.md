@@ -1,6 +1,6 @@
 # Docs an agent reads
 
-The reader acts on this file without asking a human. A doc earns its space by changing what that reader does. This standard covers Role cards (`ROLE.md`, `PLAYBOOK.md`), process documents under `workflows/`, and the skills that write them.
+The reader acts on this file without asking a human. A doc earns its space by changing what that reader does. This standard covers Role cards (`ROLE.md`, `PLAYBOOK.md`), process documents under `workflows/` (main workflows and sub-workflows), and the skills that write them.
 
 ## The doc travels
 
@@ -28,6 +28,7 @@ Every step ends on a criterion the reader can check by looking at the artifact.
 ## One meaning, one place
 
 - A rule stated twice drifts. State it once and point at it.
+- A main workflow owns pairs, support labels, conditions, and run state. A sub-workflow under `workflows/subflows/` is a reusable process fragment referenced from a `## Sub-flows` table (a main workflow or a parent sub-workflow). State each rule in one of them and point from the other.
 - Cut what the reader can look up: directory listings, command output, a file tree. Keep the convention, the reason, or the gotcha a lookup cannot reveal.
 - Delete the no-ops. "Be careful", "make sure to", "it is important that" carry no action.
 

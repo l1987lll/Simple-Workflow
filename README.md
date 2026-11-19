@@ -9,7 +9,7 @@ A simple AI Agent workflow with customizable roles and process documents.
 | Path | What it is |
 |---|---|
 | [`roles/`](roles/) | Role cards agents load to act in a capacity |
-| [`workflows/`](workflows/) | Process documents (how Roles collaborate) |
+| [`workflows/`](workflows/) | Main workflows and reusable sub-workflows (`workflows/subflows/`) |
 | [`skills/`](skills/) | Skills that create or revise roles and workflows, or set up the kit in a consumer project |
 | [`.agents/skills/`](.agents/skills/) | Committed copies of the repo's skills, plus any outside skill the repo calls, for tools that scan that path |
 | [`runs/_template/`](runs/_template/) | STATUS and brief templates for a live run |
@@ -26,7 +26,7 @@ A simple AI Agent workflow with customizable roles and process documents.
 | Skill | What it does |
 |---|---|
 | [`define-role`](skills/define-role/SKILL.md) | Interviews you, then scaffolds a Role card under `roles/<slug>/` (Role-Playbook default, or Role-merged), or revises an existing card section by section |
-| [`define-workflow`](skills/define-workflow/SKILL.md) | Interviews you for harness, environment, support, workflow shape, and run state, then creates or revises a process document under `workflows/` |
+| [`define-workflow`](skills/define-workflow/SKILL.md) | Interviews you for harness, environment, support, workflow shape, Roles, and run state, then creates or revises a main workflow or sub-workflow under `workflows/` |
 | [`setup-workflow`](skills/setup-workflow/SKILL.md) | Sets up the kit in a consumer project's `.workflow/` directory (roles, process documents, run templates, project-standards templates, and Team config files) |
 
 ## Roles
@@ -50,20 +50,25 @@ A Role is a Markdown card an agent loads to act in that capacity. The default Ro
 
 ## Workflows
 
-Process documents live in [`workflows/`](workflows/), written by [`define-workflow`](skills/define-workflow/SKILL.md). They record harness/environment pairs, support labels, conditions, Role participation, routes, run state, and caveats.
+Process documents live in [`workflows/`](workflows/), written by [`define-workflow`](skills/define-workflow/SKILL.md). A **main workflow** is a top-level `workflows/*.md` file; a Team selects it, and it records harness/environment pairs, support labels, conditions, Roles, routes, run state, and caveats. A **sub-workflow** is a reusable fragment under `workflows/subflows/*.md`, referenced from a `## Sub-flows` table; it records the Role order, handoff routes, and exit for the process it covers. A sub-workflow may reference another sub-workflow; every sub-workflow is reachable from a main workflow, the reference graph has no cycles, and a Team config never names one.
 
-| Document | Shape | Typical targets |
+| Main workflow | Shape | Typical targets |
 |---|---|---|
-| [`workflows/main-with-subagents.md`](workflows/main-with-subagents.md) | One main agent (`team-lead`); other Roles as sub-agents | Cursor + DSH (Local IDE chat) |
+| [`workflows/main-with-subagents.md`](workflows/main-with-subagents.md) | Several main agents; `team-lead` runs the business Roles as sub-agents | Cursor + DSH (Local IDE chat) |
 | [`workflows/all-main-agents.md`](workflows/all-main-agents.md) | Every Role is a main agent / bot | Grok Bot |
 
-In a consumer project, the [`workflow-owner`](roles/workflow-owner/ROLE.md) runs [`setup-workflow`](skills/setup-workflow/SKILL.md) with one of three intents — New install, Update install, or Add Team — plus Check only. New install creates several Teams in the current environment only where the shape can bring them up; a sub-agent install starts with one. Update install syncs the shared trees and has every Role with an installed card re-read its card and the process document—this session now, reachable bots by message, and the rest listed as pending. One `.workflow/` serves every harness on the project: `roles/`, `workflows/`, and `project-standards/` are shared, while each Team has its own `.workflow/teams/<id>.yaml` and its own runs. Agents read their bound Team config path, then the `workflow` file named inside; the config records `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, and `harness` ([OI-001](OPEN_ISSUES.md)). Role cards still point at the `workflows/` directory. Setup also copies [`project-standards/`](project-standards/) into `.workflow/project-standards/` (`CODING_STANDARDS.md`, `COMMIT_RULES.md`, `REVIEW_RULES.md`), rewrites Role Playbooks to require those paths (no separate detection or confirm step), and commits the definition changes in the `.workflow/` repository. Setup reminds the human they can add project-specific rules into those files for Roles to follow.
+| Sub-workflow | Referenced by | Purpose |
+|---|---|---|
+| [`workflows/subflows/team-loop.md`](workflows/subflows/team-loop.md) | `main-with-subagents`, `all-main-agents` | Business loop: assignment, research, design, implementation, review, QA, close-out |
+| [`workflows/subflows/review-loop.md`](workflows/subflows/review-loop.md) | `team-loop` | Bounded `developer` → `code-reviewer` cycle, at most four rounds |
+
+In a consumer project, the [`workflow-owner`](roles/workflow-owner/ROLE.md) runs [`setup-workflow`](skills/setup-workflow/SKILL.md) with one of three intents — New install, Update install, or Add Team — plus Check only. New install creates several Teams in the current environment only where the shape can bring them up; a sub-agent install starts with one. Update install syncs the shared trees and has every Role with an installed card re-read its card and the process document—this session now, reachable bots by message, and the rest listed as pending. One `.workflow/` serves every harness on the project: `roles/`, `workflows/`, and `project-standards/` are shared, while each Team has its own `.workflow/teams/<id>.yaml` and its own runs. Agents read their bound Team config path, then the `workflow` file named inside; the config records `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, and `harness` ([OI-001](OPEN_ISSUES.md)). The copied trees include `.workflow/workflows/subflows/`; the Team config `workflow` field always names a main workflow. Role cards still point at the `workflows/` directory. Setup also copies [`project-standards/`](project-standards/) into `.workflow/project-standards/` (`CODING_STANDARDS.md`, `COMMIT_RULES.md`, `REVIEW_RULES.md`), rewrites Role Playbooks to require those paths (no separate detection or confirm step), and commits the definition changes in the `.workflow/` repository. Setup reminds the human they can add project-specific rules into those files for Roles to follow.
 
 When the selected document is an **all-main-agents** shape (for example Grok Bot), `setup-workflow` also prepares Role bots, and it runs from the `workflow-owner` bot: it infers a **naming rule** from the current session bot's display name (and any already-created Role bots), previews names (including `workflow-owner` for **this session bot** and `team-lead` for the lead bot), asks for **shared standing instructions** (or none), then shows a **create/init plan** — whether to initialize this session bot as `workflow-owner`, and which other Role bots to create — and proceeds **only after** the human confirms that plan. Sub-agent shapes (for example Cursor / DSH) do not pre-create Role bots; they open the other main sessions instead. **Add Team** keeps the shared trees and other Team configs and creates another Team: on an all-main-agents harness, another named set of Role bots (for example `T2`) after the same naming, shared-instructions, and create/init plan confirm flow, with this-session init defaulting to no. Each new Team gets its own `.workflow/teams/<id>.yaml`.
 
 ## Runs
 
-A **run** is one team execution of a process document. Copy [`runs/_template/`](runs/_template/) to `runs/<run-id>/`, fill `STATUS.md` and `brief.md`, and let `team-lead` keep STATUS updated. Product code stays on the work branch; process artifacts stay under the run folder.
+A **run** is one team execution of a main workflow. Copy [`runs/_template/`](runs/_template/) to `runs/<run-id>/`, fill `STATUS.md` and `brief.md`, and let `team-lead` keep STATUS updated. Product code stays on the work branch; process artifacts stay under the run folder.
 
 ## Documents
 

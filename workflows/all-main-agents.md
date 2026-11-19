@@ -54,23 +54,19 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 - `qa` — main bot; member of a group; verifies the change
 - `closer` — main bot; member of a group; cleans up and drives close-out after acceptance
 
+## Sub-flows
+
+| Sub-flow | Path | Invoked at |
+|---|---|---|
+| Team loop | [`subflows/team-loop.md`](subflows/team-loop.md) | Flow step 2; all business Role handoff routes |
+
 ## Flow
 
 1. The human talks with `team-lead` about the task. Rarely `manager` takes the task from the human and messages `team-lead` with the brief.
-2. `team-lead` assigns work inside its group by messaging members with a brief. A member reports its result to `team-lead` and never messages another member.
-3. When research or architecture is needed, `team-lead` messages `research-architect`. The plan returns to `team-lead`, which then assigns `developer` with it.
-4. When a real interface design or interaction change is needed, `team-lead` messages `ui-ux-designer`. A small interface change goes straight to `developer`. The design and the prototype question return to `team-lead`, which approves the design and then takes it to the human (gate). After the human agrees, `team-lead`—not the human—hands the design to `developer`.
-5. Implementation returns to `team-lead`, which messages `code-reviewer`. Review loops stay at four rounds.
-6. The author reports every PR to `team-lead`. `team-lead` tracks the PR until it is merged.
-7. A review comment that is right, good, and low-impact is fixed by the author without asking. A comment that is high-impact, risky, or uncertain goes to the human through `team-lead` (gate) before anyone changes it.
-8. After a comment fix, the change goes through `code-reviewer` again. `team-lead` judges the easy cases: a small change may skip `qa`. A hard call goes to the human (gate). Otherwise `qa` must pass.
-9. After the pass, the author commits, pushes, and replies to the comment, then reports to `team-lead`.
-10. When the task is done, `team-lead` asks the human to confirm clean-up (gate). Then `closer` clears worktrees, temporary files, and temporary resources, and checks for omissions, unfinished work, and Issue Tracker status.
-11. `team-lead` confirms those checks. `closer` proposes a `/retro` round to `team-lead`, which asks the human whether members run `/retro` (gate). Members run `/retro` on their own bot once the human agrees.
-12. Finally `team-lead` sets the task status to Done in `STATUS.md`.
-13. A `.workflow/` change goes only to `workflow-owner`, with no approval chain. Any Role messages it directly: a member messages `workflow-owner`, `manager` and `assistant` message it, and the human may open it. `workflow-owner` confirms with the human (gate) before writing, then commits the change in the `.workflow/` repository.
-14. Parallel members are allowed when `team-lead` starts independent slices that do not edit the same files.
-15. `team-lead` may run several `developer` instances in parallel (`developer#1`, `developer#2`, …) when `STATUS.md` records disjoint path ownership for each instance; otherwise serialize.
+2. `team-lead` runs the [team loop](subflows/team-loop.md) with the business Role bots: assignment, research, design, implementation, review, PR tracking, QA, close-out, and `/retro`.
+3. A `.workflow/` change goes only to `workflow-owner`, with no approval chain. Any Role messages it directly: a member messages `workflow-owner`, `manager` and `assistant` message it, and the human may open it. `workflow-owner` confirms with the human (gate) before writing, then commits the change in the `.workflow/` repository.
+4. Parallel members are allowed when `team-lead` starts independent slices that do not edit the same files.
+5. `team-lead` may run several `developer` instances in parallel (`developer#1`, `developer#2`, …) when `STATUS.md` records disjoint path ownership for each instance; otherwise serialize.
 
 ## Routes
 
@@ -97,15 +93,6 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 
 | When | Next | Interaction |
 |---|---|---|
-| Ask is clear and research or architecture is required | `research-architect` | message + artifact |
-| Ask is clear and implementation can start | `developer` | message + artifact |
-| A real interface design or interaction change is needed | `ui-ux-designer` | message + artifact |
-| The design is approved by the human; implementation can follow | `developer` | message + artifact |
-| A member finishes a slice and the next Role needs the result | next member | message + artifact; resume when continuing the same bot |
-| A review comment needs the author to fix it | the author | message |
-| A review comment or a QA-skip call needs a decision beyond this Role | human | gate + relay |
-| Review and QA are clear; clean-up and checks remain | `closer` | message + artifact |
-| Task meets done-when; only confirmation, clean-up, and close-out remain | human, then `closer` | gate, then message + artifact |
 | A member needs a `.workflow/` change | `workflow-owner` | message + artifact |
 
 ### `team-lead` when stuck
@@ -154,14 +141,6 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 | A `teams/*.yaml` points at a process document that is missing or unreadable | human | gate |
 | Git is available but the `.workflow/` repository cannot take a commit | human | gate |
 
-### `research-architect` handoff
-
-| When | Next | Interaction |
-|---|---|---|
-| Research findings and recommended approach are written and reviewable | `team-lead` | message + artifact |
-| Architecture or plan is implementable without further design ownership here | `team-lead` | message + artifact |
-| Only remaining blocker is a clarifying question for the human | `team-lead` | message |
-
 ### `research-architect` when stuck
 
 | When | Raise to | Interaction |
@@ -170,13 +149,6 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 | Required codebase or domain access unavailable | `team-lead` | message |
 | Trade-offs need an explicit product or priority call | `team-lead` | message |
 | Ask requires product implementation to answer | `team-lead` | message |
-
-### `ui-ux-designer` handoff
-
-| When | Next | Interaction |
-|---|---|---|
-| Design specification is complete and self-checked, along with any agreed prototype | `team-lead` | message + artifact |
-| Front-end implementation exposes a gap the design does not cover | `team-lead` | message |
 
 ### `ui-ux-designer` when stuck
 
@@ -188,16 +160,6 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 | An agreed prototype needs a tool this Role lacks and no proposed alternative was accepted | `team-lead` | message |
 | No answer on the prototype question and the design cannot be signed off without it | `team-lead` | message |
 
-### `developer` handoff
-
-| When | Next | Interaction |
-|---|---|---|
-| Implementation ready for review (branch/PR prepared) | `team-lead` | message + artifact |
-| Review feedback addressed; another review pass needed | `team-lead` | message + artifact |
-| Review cycle finished; work ready for testing | `team-lead` | message |
-| A PR is raised | `team-lead` | message |
-| A comment fix is committed, pushed, and replied to | `team-lead` | message |
-
 ### `developer` when stuck
 
 | When | Raise to | Interaction |
@@ -208,14 +170,6 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 | `CODING_STANDARDS.md` or `COMMIT_RULES.md` not found at `.workflow/project-standards/` | `team-lead` | message |
 | Review feedback asks for a product or process exception | `team-lead` | message |
 
-### `code-reviewer` handoff
-
-| When | Next | Interaction |
-|---|---|---|
-| Review round findings written (fixes needed or clean) | `team-lead` | message + artifact |
-| Four-round review limit reached | `team-lead` | message + artifact |
-| No blocking findings; the implementer can proceed | `team-lead` | message + artifact |
-
 ### `code-reviewer` when stuck
 
 | When | Raise to | Interaction |
@@ -225,14 +179,6 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 | Diff, branch, or PR access unavailable | `team-lead` | message |
 | A finding needs a product or process exception | `team-lead` | message |
 
-### `qa` handoff
-
-| When | Next | Interaction |
-|---|---|---|
-| Pass/fail report written | `team-lead` | message + artifact |
-| A failure needs a fix; testing cannot usefully continue | `team-lead` | message + artifact |
-| Testing complete with no blocking failures | `team-lead` | message + artifact |
-
 ### `qa` when stuck
 
 | When | Raise to | Interaction |
@@ -241,17 +187,6 @@ Each cell is supported, unsupported, or uncertain, except subagent-depth, which 
 | Test environment, build, or required data/access unavailable | `team-lead` | message |
 | Failures look like product or process exceptions | `team-lead` | message |
 | Scope of related features unclear after one clarification | `team-lead` | message |
-
-### `closer` handoff
-
-| When | Next | Interaction |
-|---|---|---|
-| Clean-up or follow-up needs another Role's permissions or craft | `team-lead` | message |
-| Clean-up needs the human's confirmation before it starts | `team-lead` | message + gate |
-| The checks are done: omissions, unfinished work, Issue Tracker status | `team-lead` | message + artifact |
-| A `/retro` round is proposed for every member | `team-lead` | message |
-| Retro summary and proposed follow-ups are ready for human confirmation | `team-lead` | message + gate + relay |
-| Close-out is complete | `team-lead` | message |
 
 ### `closer` when stuck
 

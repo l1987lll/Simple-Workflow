@@ -6,7 +6,8 @@ Read before classifying support or writing the process document. Vocabulary matc
 
 | Place | Belongs |
 |---|---|
-| `workflows/*.md` | Pairs, support labels, conditions (mode, human at handoff, shared repo), which Roles participate, end-to-end flow, who receives each handoff and When-stuck raise, the interaction used, how a run records STATUS and handoff artifacts, caveats |
+| `workflows/*.md` (main workflow) | Pairs, support labels, conditions (mode, human at handoff, shared repo), which Roles participate, end-to-end flow, a `## Sub-flows` table, who receives each handoff and When-stuck raise, the interaction used, how a run records STATUS and handoff artifacts, caveats |
+| `workflows/subflows/*.md` (sub-workflow) | A reusable process fragment: Roles, entry, its nested `## Sub-flows`, Flow, handoff Routes, exit, interactions used, artifacts. No pairs, support labels, conditions, run state, or caveats |
 | Role card | When this Role hands off or is stuck; how this Role does its craft |
 | `roles/` | Role cards, created by `define-role` |
 
@@ -22,7 +23,16 @@ A workflow runs only the Roles the human picks. Settle that set before offering 
 - Renumber the Flow after any change.
 - On a revise, show the adjusted Flow and every added or removed route, then ask the human to accept it with the words in `SKILL.md`.
 
-The Roles section, the route tables, and the Flow are one set: every listed Role has both tables, and every route target is a listed Role.
+The Roles section, the route tables, and the Flow are one set: every listed Role has both tables, and every route target is a listed Role. A sub-workflow has handoff tables only; the main workflows that reach it keep the When-stuck tables.
+
+## Main workflow and sub-workflow
+
+- A **main workflow** is a top-level `workflows/*.md` file. A Team selects it. It owns pairs, support labels, conditions, run state, and caveats.
+- A **sub-workflow** is `workflows/subflows/<slug>.md`. At least one main workflow reaches it through a chain of `## Sub-flows` tables. It is never a Team's selected workflow. A sub-workflow may reference another sub-workflow, and the reference graph has no cycles.
+- The `## Sub-flows` table has columns Sub-flow, Path, Invoked at. Path is a relative link: `subflows/<slug>.md` from a main workflow, or `<slug>.md` from a sub-workflow in the same folder.
+- A main workflow's Support table covers every interaction its referenced sub-workflows use, directly or through a nested sub-workflow. A sub-workflow route may use an interaction the main marks unsupported or uncertain only when that main records the matching caveat.
+- A Role's handoff table lives in the file that owns the hop: the main workflow, or one referenced sub-workflow. The When-stuck table for that Role stays in the main workflow.
+- A sub-workflow does not choose main agent or sub-agent. The main workflows that reach it decide participation and carry the interactions.
 
 ## Session identity
 
@@ -98,6 +108,8 @@ Route warned: `lead` → `scout` by spawn. Claude Code / local CLI is uncertain.
 
 `lead → scout by spawn — uncertain on Claude Code / local CLI; kept by human.`
 
+A sub-workflow `review-loop` is nested under `team-loop`, which is referenced by both main workflows. Each `## Sub-flows` table names the next level down. Its routes use `message`, `artifact`, and `resume`, all supported on both pairs.
+
 ## Process document discovery
 
-At Gate, list `workflows/*.md`, plus any legacy repo-root `workflow.md` / `workflow-*.md`. Summarize each from its opening shape lines. New creates go under `workflows/`. If the human's invoke did not already choose create versus revise a named file, ask before the harness interview.
+At Gate, list main workflows at `workflows/*.md` and sub-workflows at `workflows/subflows/*.md`, plus any legacy repo-root `workflow.md` / `workflow-*.md`. Summarize each from its opening shape lines. New main workflows go under `workflows/`; new sub-workflows go under `workflows/subflows/` and are added to the `## Sub-flows` table of every referencing workflow, main or sub-workflow. If the human's invoke did not already choose create versus revise a named file, ask before the harness interview; for a create, ask main workflow versus sub-workflow and, for a sub-workflow, which workflow references it.

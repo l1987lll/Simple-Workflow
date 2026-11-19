@@ -8,7 +8,8 @@ Read when detecting the install and its workflow-owner, choosing an intent, plan
 <project>/
   .workflow/
     roles/               # shared by every Team and harness
-    workflows/           # shared; process documents only
+    workflows/          # shared; main workflows at the top level, sub-workflows under subflows/
+      subflows/
     project-standards/   # shared
     teams/
       <id>.yaml          # one per Team
@@ -34,19 +35,19 @@ Run data in `runs/<run-id>/` belongs to the Team running that run; it is not a d
 
 One `.workflow/` serves every harness on the project. `roles/`, `workflows/`, and `project-standards/` are shared; each Team has one `teams/<id>.yaml`; runs live side by side and each belongs to one Team. A new harness or bot group joins as a new Team, never as a second tree.
 
-After install, a process document's `runs/` paths mean the copied tree at `.workflow/runs/`, not a new `runs/` folder at the consumer repo root. Relative links from `.workflow/workflows/*.md` to `../runs/_template/` must resolve. Do not create a consumer-root `runs/`, and do not rewrite those path strings (that rewrite is not a listed Dynamic edit).
+After install, a main process document's `runs/` paths mean the copied tree at `.workflow/runs/`, not a new `runs/` folder at the consumer repo root. Relative links from `.workflow/workflows/*.md` to `../runs/_template/` must resolve. Do not create a consumer-root `runs/`, and do not rewrite those path strings (that rewrite is not a listed Dynamic edit). A sub-workflow sits one level deeper at `.workflow/workflows/subflows/`; it writes run-folder paths as plain code spans, not relative links, and its own `## Sub-flows` path resolves from that sub-workflow.
 
 ## Valid kit source
 
 A path is a valid **kit root** when it has:
 
 - `roles/<slug>/ROLE.md` for at least one slug
-- at least one `workflows/*.md` process document
+- at least one main workflow `workflows/*.md` (sub-workflows under `workflows/subflows/` travel with it)
 
 A path is a valid **installed consumer source** when it has:
 
 - `.workflow/roles/<slug>/ROLE.md` for at least one slug
-- at least one `.workflow/workflows/*.md` process document
+- at least one main workflow `.workflow/workflows/*.md` (sub-workflows under `.workflow/workflows/subflows/` travel with it)
 
 A legacy `workflow/roles/` plus `workflow/workflows/` tree is also a valid installed consumer source.
 
@@ -275,7 +276,7 @@ Each Team has one config file at `.workflow/teams/<id>.yaml`. The filename stem 
 Required keys, in this order:
 
 1. `id` — unique Team id (platform team-lead id or GUID); must match the filename stem; typically the same value as `team_lead_id`
-2. `workflow` — one path relative to `.workflow/workflows/` naming a process document in that directory
+2. `workflow` — one path relative to `.workflow/workflows/` naming a main workflow at the top level of that directory; never a file under `subflows/`
 3. `team_lead_id` — unique lead identifier. On an all-main-agents shape it is the created lead bot's id. On a sub-agent shape the lead is a separate session this run cannot read, so it is a generated GUID written into the lead session's instructions. A real platform id (Grok agent id or Cursor session id) replaces the GUID once known.
 4. `workflow_owner_id` — the workflow-owner's platform agent or session id for this Team; the same value as `team_lead_id` when one session holds both; a GUID when the platform id is unknown, remembered by the human
 5. `harness` — lowercase product slug for this Team (for example `grok`, `cursor`, or `deepseek` — examples only, not an exhaustive allowlist). If the slug is unknown, ask the human once.
@@ -296,7 +297,7 @@ A config written before `workflow_owner_id` existed has four keys. On Update ins
 
 Every Team has a session or bot group behind it, and its config is written after those sessions or bots exist so its ids are real. A New install creates only the Teams it brings up now; a later Team goes through Add Team.
 
-Runtime rule: every agent in the Team reads its bound config path (for example `.workflow/teams/216ab690-efa9-4760-9938-e54be49013bd.yaml`), then reads the `workflow` target. Missing the path, the file, a required key, or the target process document means stop. The hard bind is that exact path in lead, owner, and member standing instructions (Initialize); spawn briefs must carry the same path. Do not fail solely because another Team's config is absent unless this run was supposed to create it.
+Runtime rule: every agent in the Team reads its bound config path (for example `.workflow/teams/216ab690-efa9-4760-9938-e54be49013bd.yaml`), then reads the `workflow` target. Missing the path, the file, a required key, or the target main workflow means stop. The hard bind is that exact path in lead, owner, and member standing instructions (Initialize); spawn briefs must carry the same path. Do not fail solely because another Team's config is absent unless this run was supposed to create it.
 
 Role cards continue to point at the `workflows/` directory. Setup does not rewrite those pointers to a Team config path.
 
@@ -318,15 +319,15 @@ Do not invent template contents beyond the shipped files. Replacing the `project
 
 ## End-to-end check
 
-Walk this session's selected process document (from its bound Team config `workflow`). Also walk any other process document already named by an existing `teams/*.yaml` you are reporting; walk a file once if more than one config names it.
+Walk this session's selected main workflow (from its bound Team config `workflow`) and every sub-workflow it reaches. Also walk any other main workflow already named by an existing `teams/*.yaml` you are reporting; walk a file once if more than one config names it.
 
 Start at `team-lead` intake and follow every Flow step and every Routes table row (handoffs and When stuck) until close-out.
 
 1. **Roles.** Every slug the document names exists as `.workflow/roles/<slug>/ROLE.md`. A Role-Playbook card also has `PLAYBOOK.md`.
-2. **Team configs.** Every expected Team config under `.workflow/teams/` exists, parses as YAML, and has `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, and `harness` in that order (`id` matches the filename stem). Each `workflow` target exists and is readable under `.workflow/workflows/`. Resolve this session's bound config with [Detect this session's bound Team config](#detect-this-sessions-bound-team-config); that config must be present and valid — failure of that config fails the check. Fail if more than one `teams/*.yaml` matches the same lead id. Bound lead and owner instructions, when this session can see them, must cite the matching config path.
+2. **Team configs.** Every expected Team config under `.workflow/teams/` exists, parses as YAML, and has `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, and `harness` in that order (`id` matches the filename stem). Each `workflow` target is a main workflow at the top level of `.workflow/workflows/`, exists, and is readable; a target under `subflows/` fails. Resolve this session's bound config with [Detect this session's bound Team config](#detect-this-sessions-bound-team-config); that config must be present and valid — failure of that config fails the check. Fail if more than one `teams/*.yaml` matches the same lead id. Bound lead and owner instructions, when this session can see them, must cite the matching config path.
 3. **Shared trees.** `roles/`, `workflows/`, and `project-standards/` exist once. No second copy of them sits beside `.workflow/` for another harness.
-4. **Document shape.** The process document has Targets, Support, Roles, Flow, Routes (handoff and When-stuck tables for each listed Role), Run state and artifacts, and Caveats.
-5. **Hops.** Each route's Next is a listed slug or `human`. The interaction is one the document's Support table names. A spawn hop fits a shape where a lead starts sub-agents. A message hop between main agents fits an all-main-agents shape when `main-peers` is supported; where it is unsupported, the route uses relay. An unsupported or uncertain interaction is acceptable only as a caveat already recorded in the document.
+4. **Document shape.** Each main workflow has Targets, Support, Roles, Sub-flows, Flow, Routes (handoff and When-stuck tables for each listed Role, except a handoff owned by a referenced sub-workflow), Run state and artifacts, and Caveats. Each referenced sub-workflow has Entry, Roles, Sub-flows, Flow, Routes, Exit, Interactions used, and Artifacts, and carries no pairs, support, conditions, run state, or caveats.
+5. **Hops.** Each route's Next is a listed slug or `human`. The interaction is one the document's Support table names. A spawn hop fits a shape where a lead starts sub-agents. A message hop between main agents fits an all-main-agents shape when `main-peers` is supported; where it is unsupported, the route uses relay. An unsupported or uncertain interaction is acceptable only as a caveat already recorded in the document. Walk every route in each referenced sub-workflow, and in each sub-workflow it nests, as if inserted at the invocation point in the main workflow's Flow. Every `## Sub-flows` path in a main workflow or sub-workflow resolves under `.workflow/workflows/subflows/`; every sub-workflow is reachable from a main workflow; the reference graph has no cycles.
 6. **Gates and relay.** Every `gate` or `relay` hop reaches the human through a main agent the human opened — the lead, or another main Role the document names. Human-only slash commands are reminded by the main agent that talks to the human. `/retro` follows the document: where `slash /retro` is supported and the document allows it, members run it after a human gate; elsewhere the human runs it and a recorded caveat is acceptable.
 7. **Artifacts and run template.** `.workflow/runs/_template/STATUS.md` and `.workflow/runs/_template/brief.md` exist. Relative links from the process document to `../runs/_template/` resolve to that folder. The document states the STATUS path, the single writer (the lead), per-instance rows, artifact layout, and disjoint path ownership when `parallel` is used. A live run folder is created under `.workflow/runs/<run-id>/`.
 8. **Coding / commit / review standards.** `.workflow/project-standards/` has the three template files (when that tree was installed or replaced this run, or already present and Playbooks already require them), each readable, and the matching Playbooks require those paths.

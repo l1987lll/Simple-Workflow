@@ -23,7 +23,8 @@ Not the same as a **run** (`runs/<run-id>/`).
 ```text
 .workflow/
   roles/               # shared by every Team and harness
-  workflows/           # shared; process documents only
+  workflows/           # shared; main workflows at the top level, sub-workflows under subflows/
+    subflows/
   project-standards/   # shared
   teams/
     216ab690-efa9-4760-9938-e54be49013bd.yaml
@@ -39,7 +40,7 @@ One `.workflow/` serves every harness on the project. `roles/`, `workflows/`, an
 Field order (required):
 
 1. `id` — unique Team id (platform team-lead id or GUID; matches filename stem; typically same as `team_lead_id`). Do not use short codes `t1`, `t2`, …
-2. `workflow` — path relative to `.workflow/workflows/`
+2. `workflow` — path relative to `.workflow/workflows/` to a main workflow at the top level; never a file under `subflows/`
 3. `team_lead_id` — unique lead identifier (platform agent/session id when available)
 4. `workflow_owner_id` — the workflow-owner's platform agent or session id for this Team; same as `team_lead_id` when one session holds both; a GUID the human remembers when the platform id is unknown
 5. `harness` — lowercase product slug (`grok`, `cursor`, `deepseek`, …)
@@ -80,13 +81,14 @@ Rules:
 - **Check only:** no tree copy, no yaml rewrite.
 - **Gitignore:** the consumer repository keeps ignoring `.workflow/`; the tree's own repository tracks it.
 - **Commit:** after Check passes, setup commits the definition changes in the `.workflow/` repository and reports the commit id. `.workflow/.gitignore` ignores `runs/*` and keeps `runs/_template/`, so run data stays out of the definition history.
-- **Check:** every expected Team config exists and parses; five keys in order; `workflow` target readable; lead and owner instructions cite the matching path; both ids present.
+- **Check:** every expected Team config exists and parses; five keys in order; `workflow` target is a main workflow at the top level of `.workflow/workflows/` and is readable; every `## Sub-flows` path resolves and every sub-workflow is reachable with no cycle; lead and owner instructions cite the matching path; both ids present.
 
 ## Out of scope (v1)
 
 - Member roster fields, sidebar section ids, display names (may be added later).
 - A global `teams/index.yaml` (avoid second source of truth).
 - Changing Role cards’ static pointers away from the `workflows/` directory (still directory-level; team config chooses the file).
+- A Team config naming a sub-workflow as its current workflow; sub-workflows are read through their main workflow.
 
 ## Acceptance
 
