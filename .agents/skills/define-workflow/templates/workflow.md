@@ -37,6 +37,10 @@ Each cell is `supported`, `unsupported`, or `uncertain`, except `subagent-depth`
 
 {{ROLES}}
 
+## Sub-flows
+
+{{SUBFLOWS}}
+
 ## Flow
 
 {{FLOW}}

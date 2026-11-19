@@ -27,9 +27,9 @@ This skill lives in the Simple-Workflow kit (and later as a globally installed s
 - The consumer layout is `<project>/.workflow/{roles,workflows,teams,runs,project-standards}`. Create `.workflow/` when missing. Never install into a bare `workflow/` directory, and never write Role cards at the consumer repo root.
 - `roles/`, `workflows/`, and `project-standards/` are shared by every Team and every harness. Never keep a second copy of them per harness.
 - Never copy trees for a new Team. A new harness or bot group joins the existing `.workflow/` as a new Team with its own `teams/<id>.yaml`.
-- Copy only the kit's `roles/`, `workflows/`, `runs/` (including `runs/_template/`), and `project-standards/`. Never copy the kit's `skills/`, `docs/`, root README, GLOSSARY, OPEN_ISSUES, AGENTS, LICENSE, `.agents/`, or `.git`.
+- Copy only the kit's `roles/`, `workflows/`, `runs/` (including `runs/_template/`), and `project-standards/`. Copy `workflows/` recursively, including `workflows/subflows/`. Never copy the kit's `skills/`, `docs/`, root README, GLOSSARY, OPEN_ISSUES, AGENTS, LICENSE, `.agents/`, or `.git`.
 - Detect this session's harness id from the runtime environment: the platform or product name in lowercase slug form. `cursor`, `grok`, and `deepseek` are examples, not an allowlist. If the id is unknown, ask the human once.
-- Each Team has one config file at `.workflow/teams/<id>.yaml` with `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, and `harness` in that order; `id` matches the filename stem. Schema, identifier rules, and create-versus-update cases: [reference.md](reference.md#team-config-format). Team config is the only current-workflow pointer.
+- Each Team has one config file at `.workflow/teams/<id>.yaml` with `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, and `harness` in that order; `id` matches the filename stem. The `workflow` value names a main workflow at the top level of `.workflow/workflows/`, never a file under `.workflow/workflows/subflows/`. Schema, identifier rules, and create-versus-update cases: [reference.md](reference.md#team-config-format). Team config is the only current-workflow pointer.
 - `workflow_owner_id` names the session or bot that runs this skill for that Team and holds the `.workflow/` write permission. Resolve it before any write: [reference.md](reference.md#find-the-workflow-owner).
 - Every run resolves this session's **bound** Team config before deciding create versus update: [reference.md](reference.md#detect-this-sessions-bound-team-config). Stop when more than one `teams/*.yaml` matches the same lead id.
 - Leave Role cards pointing at the `workflows/` directory (library location only). Never rewrite a Role card to a Team config path: the hard runtime gate is the config path bound into standing instructions at Initialize.
@@ -150,7 +150,7 @@ On **New install**, copy all four trees below. On **Update install**, copy only 
 
 An Update install applies the accepted trees to **every Team on this harness**. Other harnesses sync on their own Update install, so do not enumerate them or update their configs, but do not narrow the update to one Team either. Never overwrite or delete `.workflow/teams/*.yaml` during a tree replace. When replacing `runs/`, write `runs/_template/` only; do not delete sibling `runs/<run-id>/` folders.
 
-After a New install, the consumer must contain Role cards under `.workflow/roles/<slug>/`, process documents `.workflow/workflows/*.md`, `.workflow/runs/_template/` (at least `STATUS.md` and `brief.md`), and `.workflow/project-standards/` with `CODING_STANDARDS.md`, `COMMIT_RULES.md`, and `REVIEW_RULES.md`.
+After a New install, the consumer must contain Role cards under `.workflow/roles/<slug>/`, main workflows at `.workflow/workflows/*.md`, sub-workflows at `.workflow/workflows/subflows/*.md` when the source has them, `.workflow/runs/_template/` (at least `STATUS.md` and `brief.md`), and `.workflow/project-standards/` with `CODING_STANDARDS.md`, `COMMIT_RULES.md`, and `REVIEW_RULES.md`.
 
 Done when the accepted trees are copied, existing Team yamls were left in place, live run folders were left in place, and no kit-only tree was copied into `.workflow/`.
 
@@ -164,7 +164,7 @@ Run **bound-Team detection** ([reference.md](reference.md#detect-this-sessions-b
 
 If this run's intent is Add Team, ask which workflow the **new** Team should use.
 
-Otherwise list every process document under the kit (or just-copied) `workflows/*.md`. For each file, give its path and a one-line shape summary from its opening. Ask the human (human action): **Which workflow do you want to install?** A number or a filename answers. Recommend from the document's own Targets when that is obvious for this harness. Do not write the Team yaml until the human has chosen or kept a document.
+Otherwise list every main process document under the kit (or just-copied) `workflows/*.md`; do not list files under `workflows/subflows/`. For each file, give its path and a one-line shape summary from its opening. Ask the human (human action): **Which workflow do you want to install?** A number or a filename answers. Recommend from the document's own Targets when that is obvious for this harness. Sub-workflows travel with the main workflow that reaches them and are not separate choices. Do not write the Team yaml until the human has chosen or kept a document.
 
 On a **New install**, ask which process document to install once; every Team this install creates uses that one document. Then settle how many Teams this install creates in this environment (human action), default one: this session's Team. Ask that count only when this run can bring several Teams up: an all-main-agents harness creates one bot group per Team. On a sub-agent harness, create one Team and say that more Teams come later through Add Team, each a new main session. Every Team uses this session's harness. For each additional Team, ask only its display name and its prefix (for example `T2`).
 
@@ -252,7 +252,7 @@ Done when this session is initialized as `workflow-owner` (or the human's declin
 
 This step's name is Check.
 
-Always run Check after the writes, including every update, add-team, or check-only. Walk each selected process document end to end: the installed trees, Team configs, run template, routes, and required interactions must let a run start and follow every hop. Checklist: [reference.md](reference.md#end-to-end-check).
+Always run Check after the writes, including every update, add-team, or check-only. Walk each selected main process document and every sub-workflow it reaches end to end: the installed trees, Team configs, run template, routes, and required interactions must let a run start and follow every hop. Checklist: [reference.md](reference.md#end-to-end-check).
 
 Fail when this session's bound config is missing (when this run should have one), unreadable, missing required keys, missing `workflow_owner_id`, or its `workflow` target is missing or unreadable, and when more than one `teams/*.yaml` matches the same lead id. Do not fail solely because another Team's config is absent, unless this run was supposed to create it.
 
@@ -306,12 +306,13 @@ Done when that report has been given, Role process pointers still point at the `
 - [ ] On Add Team: no trees were copied, other Team yamls were kept, and a new Team yaml was created; this-session init matched a new harness or an extra bot group
 - [ ] On Check only: no trees were replaced and Team yamls were not rewritten
 - [ ] Kit source found by the detection order (or given by the human); skipped on Add Team or Check only
-- [ ] On a New install, `.workflow/roles/`, `.workflow/workflows/*.md`, `.workflow/runs/_template/`, and `.workflow/project-standards/` materialized from the kit; on Update install, only accepted trees were copied; on Add Team or Check only, no trees were copied
+- [ ] On a New install, `.workflow/roles/`, `.workflow/workflows/*.md`, `.workflow/workflows/subflows/` when the source has sub-workflows, `.workflow/runs/_template/`, and `.workflow/project-standards/` materialized from the kit; on Update install, only accepted trees were copied; on Add Team or Check only, no trees were copied
 - [ ] On a New install, the number of Teams was chosen, every Team got its own config with ids from its sessions or bots, and every config carries the same `workflow`
 - [ ] Kit `skills/`, `docs/`, and root README not copied into `.workflow/`
 - [ ] Live `.workflow/runs/<run-id>/` folders left in place, including other Teams' runs
 - [ ] Bound-Team detection ran; human chose a process document for this Team, or this session's existing bound Team config was kept and still resolves; no duplicate yaml for the same lead id
-- [ ] This Team's `.workflow/teams/<id>.yaml` exists with `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, and `harness` in that order and a readable `workflow` target; other Team yamls were preserved
+- [ ] This Team's `.workflow/teams/<id>.yaml` exists with `id`, `workflow`, `team_lead_id`, `workflow_owner_id`, and `harness` in that order and a readable `workflow` target that is a main workflow at the top level of `.workflow/workflows/`, never under `subflows/`; other Team yamls were preserved
+- [ ] Sub-workflow files were copied with `workflows/`, every `## Sub-flows` path in a main workflow or sub-workflow resolves, every sub-workflow is reachable from a main workflow with no cycle, and no sub-workflow was offered as a Team's workflow
 - [ ] Role card `workflows/` directory pointers left unchanged
 - [ ] Standards Playbooks rewritten to `.workflow/project-standards/` after a New install or after `roles/` / `project-standards/` replace; no detection ask
 - [ ] Consumer `.gitignore` contains `.workflow/` (or the consumer had none); `.workflow/.gitignore` ignores `runs/*` and keeps `runs/_template/`
@@ -320,4 +321,4 @@ Done when that report has been given, Role process pointers still point at the `
 - [ ] Human actions were reminded only at the steps where they apply, and only for this session's harness
 - [ ] Report lists only human actions that applied this run as done, declined, or pending
 - [ ] Did not claim the run complete while a pending human action that applied this run remained
-- [ ] End-to-end check passed for each selected process document after this run
+- [ ] End-to-end check passed for each selected main workflow after this run, including every sub-workflow it reaches
